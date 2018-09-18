@@ -63,7 +63,7 @@ export default {
       if(state.shops.length === 0)
         return Vue.axios({
           // url:'http://119.23.212.109/api/shopList',
-          url:'http://119.23.212.109/api/shopList',
+          url:'https://119.23.212.109/api/shopList',
           method: 'get'
          })
          .then( res => commit( 'LOAD_SHOP_LIST', res.data ))
