@@ -18,7 +18,7 @@
 
 <style scoped>
   .shop {
-    margin-top: .4rem;
-    height: calc(100vh - .4rem);
+    margin: .4rem auto;
+    height: calc(100vh - .8rem);
   }
 </style>

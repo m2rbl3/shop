@@ -16,6 +16,7 @@ const order = () => import('@/views/order');
 const product = () => import('@/views/product');
 const cart = () => import('@/views/cart');
 const login = () => import('@/views/login');
+const pay = () => import('@/views/pay');
 const header = () => import('@/components/v-header');
 const footer = () => import('@/components/v-footer');
 
@@ -33,49 +34,56 @@ const router = new VueRouter({
       footer: footer
     }
   }, {
-    path:'/shop',
-    name:'商店',
+    path: '/shop',
+    name: '商店',
     components: {
       default: shop,
       header: header,
       footer: footer
     }
   }, {
-    path:'/user',
-    name:'用户管理',
+    path: '/user',
+    name: '用户管理',
     components:{
       default: user,
       header: header,
       footer: footer
     }
-  }, {
-    path:'/order',
-    name:'订单管理',
+  },/* {
+    path: '/order',
+    name: '订单管理',
     components: {
       default: order,
       header: header,
       footer: footer
     }
-  }, {
-    path:'/product',
-    name:'产品详情',
+  },*/ {
+    path: '/product',
+    name: '产品详情',
     components: {
       default: product,
       header: header
     }
   }, {
     path: '/cart',
-    name:'购物车',
+    name: '购物车',
     components: {
       default: cart,
       header: header
     }
   }, {
     path: '/login',
-    name:'登陆',
+    name: '登陆',
     components:{
       default: login,
       header: header
+    }
+  },{
+    path:'/pay',
+    name: '付款',
+    components:{
+      default:pay,
+      header:header
     }
   }]
 });
@@ -89,15 +97,3 @@ const router = new VueRouter({
 //   else next();
 //  });
 export default router
-
-/* {
-    path:'/user',
-    component:() => import('@/views/user'),
-    children:[{
-      path:'/ka',
-      component:()=>import('./components/ka'),
-      }],
-    meta:{
-      fuck:'yes'
-    },
-  }, */

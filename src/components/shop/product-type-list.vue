@@ -21,15 +21,9 @@
       }
     },
     beforeCreate(){
-      const _self = this;
-      if(this.$store.state.shops.length === 0)
-      this.$store.dispatch('LOAD_SHOP_LIST').then(function(){
-          _self.$store.commit('LOAD_SHOP_TYPE',_self.$route.query.shopIndex);
-          _self.$store.commit('LOAD_PRODUCT_TYPE',0);
-      });
-      else this.$store.commit('LOAD_PRODUCT_TYPE',0);
+      this.$store.commit('LOAD_PRODUCT_TYPE',0);
     },
-    update(){
+    updated(){
       this.$store.commit('LOAD_PRODUCT_TYPE',0);
     },
   }
@@ -51,7 +45,7 @@
   }
 
   .list-product-type:hover {
-    background-color: blue;
+    background-color: #175ac1;
     color: white;
   }
 </style>

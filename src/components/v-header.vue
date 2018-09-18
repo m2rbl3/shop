@@ -1,7 +1,7 @@
 <template>
-  <header class="shop-header">
-    <a @click="back" class="order-back btn--a">
-      <span class="icon-back"><</span>
+  <header class="shop-header bgcolor-blue">
+    <a @click="back" class="order-back">
+      <span class="icon-back iconfont">&#xe600;</span>
     </a>
     <div class="header-title">{{head}}
     </div>
@@ -14,22 +14,20 @@
     name: 'TheHeader',
     data(){
       return{
-        head: 'head',
-        isBack: false
+        // head: 'head'
       }
     },
-    beforeRouteEnter(to,from,next){
-      if(to)
-      next( vm => vm.head = to.query.headName);
-    },
-    beforeRouteUpdate(to,from,next){
-      if(this.isback) this.head = this.$route.matched[0].query.headName;
-      if(to) this.head = to.query.headName;
-      next();
+    computed:{
+      head(){
+        if(this.$route.query.headName)
+          return this.$route.query.headName;
+        else if(this.$route.name)
+          return this.$route.name;
+      }
     },
     methods:{
       back(){
-        this.isBack = true;
+        // this.isBack = true;
         this.$router.go(-1);
       }
     }
@@ -44,10 +42,9 @@
   left: 0;right: 0;
   z-index: 1;
   display: flex;
-  background-color: #FFF;
   font-size: 0;
   text-align: center;
-  border-bottom: 1px solid gray;
+  /*border-bottom: 1px solid gray;*/
 }
 
 .order-back {
@@ -57,15 +54,18 @@
   position: absolute;
   left: 0;top: 0;
   font-size: 0;
+  color: white;
 }
   .icon-back {
     margin: auto;
-    margin-left: .05rem;
-    font-size: .3rem;
+    margin-left: .5em;
+    font-size: 30px;
   }
 
 .header-title {
   margin: auto;
   font-size: 30px;
+  line-height: 1;
+  color: white;
 }
 </style>

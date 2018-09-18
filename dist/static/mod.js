@@ -13,9 +13,3 @@ app.get("/",function(req,res){
 app.listen(8060,function(){
   console.log('fuck');
 });
-// self.addEventListener('message',function(e){
-//     var data=e.data;
-//     // self.postMessage(data+'吃屎');
-//     throw "韩九啦起头";
-//     self.close();
-// });

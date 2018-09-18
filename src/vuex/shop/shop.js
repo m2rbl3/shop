@@ -1,5 +1,6 @@
 
 import Vue from 'vue'
+import api from '@/api/api'
 export default {
   state: {
     shops: [],                  //商铺列表
@@ -18,8 +19,8 @@ export default {
   },
   mutations: {
     /*读取商店列表*/
-    ['LOAD_SHOP_LIST'](state,list) {
-      state.shops = list;
+    ['LOAD_SHOP_LIST'](state,data) {
+      state.shops = data.list;
     },
     /*读取商店列表的产品类型列表*/
     ['LOAD_SHOP_TYPE'](state,ShopIndex) {
@@ -42,6 +43,7 @@ export default {
     /*将选择产品缓存，准备推入购物车*/
     ['PRODUCT_CACHE'](state){
        state.productCache = JSON.parse(JSON.stringify(state.chooseProduct));
+       Vue.set(state.productCache,'count',1);
     },
     /*改变产品数量*/
     ['CHANGE_PRODUCT_COUNT'](state,val) {
@@ -49,20 +51,23 @@ export default {
     },
     /*改变产品总价格*/
     ['CART_PRODUCT_ALLPRICE'](state,val){
-      Vue.set(state.productCache,'allPrice',val);
+      Vue.set(state.productCache,'allPrice', Math.ceil(100 * val) / 100);
     },
-    ['CHANGE_PRODUCT_CACHE'](state,val){
-      Vue.set(state.productCache,val.key,val.value);
+    ['CHANGE_PRODUCT_CACHE'](state,{key,value}){
+      Vue.set(state.productCache,key,value);
     },
   },
   actions: {
     /*请求商店数据*/
-    ['LOAD_SHOP_LIST']({commit}) {
-      return Vue.axios({
-        url:'http://localhost:8050/static/shop.json',
-        method: 'get'
-       }).then( res => commit('LOAD_SHOP_LIST',res.data))
-       .catch( err => console.log(err));
+    ['LOAD_SHOP_LIST']({commit,state}) {
+      if(state.shops.length === 0)
+        return Vue.axios({
+          // url:'http://119.23.212.109/api/shopList',
+          url:'http://119.23.212.109/api/shopList',
+          method: 'get'
+         })
+         .then( res => commit( 'LOAD_SHOP_LIST', res.data ))
+         .catch( err => console.log( err ));
     }
   }
 }

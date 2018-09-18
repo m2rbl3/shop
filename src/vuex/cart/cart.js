@@ -32,13 +32,17 @@ export default {
       return cartShops;
     },
 
-    ['CHANGE_CART_DATA'](state,{prop,val}) {
-      Vue.set(state.cartShops,prop,val);
-    },
-
     /*修改某商品状态*/
     ['CHANGE_CART_PRODUCT_DATA'](state,{shopIndex,productIndex,prop,val}){
       Vue.set(state.cartShops[shopIndex].products[productIndex],prop,val);
+    },
+    /*如果购物车某商店商品全选，则该商店全选按钮也变成全选*/
+    ['SHOP_ALL_CHECK'](state,{shopIndex,val}){
+      this.state.cartShops[shopIndex].checked = val;
+    },
+    /*清空购物车*/
+    ['CLEAR_CART'](state){
+      this.state.cartShops = null;
     }
   }
 }

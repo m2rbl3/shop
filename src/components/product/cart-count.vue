@@ -28,7 +28,7 @@
       countSub(){
         const _self = this; 
         this.$store.commit('CHANGE_PRODUCT_COUNT',
-          _self.product.count >= 1 ? ( _self.product.count - 1 ) : 0
+          _self.product.count > 1 ? ( _self.product.count - 1 ) : 1
         );
         this.computeAllPrice();
       },

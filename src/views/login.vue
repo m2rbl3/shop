@@ -85,12 +85,10 @@
       /*登陆验证*/
       login(){
         this.$store.commit('CHANGE_LOGIN_TOKEN');
-        // this.toShowDialog = true;
-        // this.$router.push(this.fromPath);
         const _self = this;
         this.axios({
           method:'post',
-          url: 'localhost:8050/api',
+          url: 'http://119.23.212.109/api/login',
           data: {
             username: this.username,
             password: this.password
@@ -98,11 +96,10 @@
         }).then( res => {
           if(res) {
             console.log(res);
-            // _self.store.commit('CHANGE_LOGIN_TOKEN');
-            // router.push('./shop');
+             _self.store.commit('CHANGE_LOGIN_TOKEN');
+             _self.$router.push(this.fromPath);
           }
         }).catch( rej => {
-          console.log(rej);
           _self.toShowDialog = true;
         });
       },

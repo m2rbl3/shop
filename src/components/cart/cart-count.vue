@@ -21,7 +21,7 @@
             shopIndex: this.shopIndex,
             productIndex: this.productIndex,
             prop: prop,
-            val: parseFloat(val)
+            val: val
           });
         }
       },
@@ -37,21 +37,17 @@
     },
     methods:{
       countSub(){
-        let countCache = this.product.count >= 1 ? ( this.product.count - 1 ) : 0
-        this.product = { prop: 'count', val: countCache };
-        this.computeAllPrice();
+        this.count = this.product.count > 1 ? ( this.product.count - 1 ) : 1;
       },
       countplus(){
-        let countCache =  this.product.count + 1;
-        this.product = { prop: 'count', val: countCache };
-        this.computeAllPrice();
+        this.count =  this.product.count + 1;
       },
       computeAllPrice(){
-        let allPriceCache = this.product.price * this.product.count;
+        let allPriceCache = Math.ceil(this.product.price * this.product.count * 100) / 100;
         this.product = { prop:'allPrice', val: allPriceCache };
       }
-   }
   }
+}
 </script>
 
 <style scoped>

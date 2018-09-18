@@ -27,14 +27,7 @@
       loadProductDetail(productIndex,productName){
         const _self = this;
         this.$store.commit('LOAD_PRODUCT_DETAIL',productIndex);
-        this.$router.push('/product');
-          // ?'
-          // +`&shopID=${_self.$route.query.shopID}`
-          // +`&shopIndex=${_self.$route.query.shopIndex}`
-          // +`&chooseType=${_self.typeIndex}`
-          // +`&productIndex=${productIndex}`
-          // +`&headName=${productName}` 
-        // );
+        this.$router.push(`/product?headName=${productName}`);
       }
     }
   }
@@ -50,24 +43,28 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-
+    align-content: flex-start;
+    align-items: flex-start;
   }
 }
 
   .product {
-    margin: .05rem;
+    width: 45%;
+    margin: 2.5%;
+    overflow: hidden;
   }
 
     .product-pic {
-      height: .5rem;
-      width: .5rem;
+      width: 100%;
       & img{
-        max-height: 100%;
+        width: 100%;
       }
     }
 
     .product-name {
       text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
 </style>

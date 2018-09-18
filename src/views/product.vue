@@ -53,12 +53,10 @@
 <style scoped>
 
   .product {
-    height: calc(100vh - .8rem);
     margin: .4rem auto;
   }
 
-  .product-pic {
-    position: relative;
+  .product-pic {  
     height: 3.75rem;
     & img {
       height: 100%;

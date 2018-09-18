@@ -9,10 +9,7 @@
 <script>
 import Vue from "vue"
 export default {
-  name: 'App',
-  methods:{
-
-  }
+  name: 'App'
 }
 </script>
 
@@ -56,8 +53,7 @@ export default {
     border-style: none;
   }
 
-  input[type='text'],
-  input:not([type]) {
+  input {
     border: none;
   }
 
@@ -66,10 +62,32 @@ export default {
   }
 
   /*通用样式*/
-  .btn--a {
+  a {
+    color: black;
     display: block;
     text-decoration: none;
-    color: black;
     cursor: pointer;
   }
+
+  .bgcolor-blue {
+    background-color: #6288f7;
+  }
+
+  /* 阿里字体图标 */
+  .iconfont{
+    font-family:"iconfont" !important;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+@font-face {
+  font-family: 'iconfont';  /* project id 836978 */
+  src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot');
+  src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_836978_6q048da1h76.woff') format('woff'),
+  url('//at.alicdn.com/t/font_836978_6q048da1h76.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_836978_6q048da1h76.svg#iconfont') format('svg');
+}
 </style>

@@ -4,9 +4,9 @@
     <div class="user__avatar">
       <img class="avatar__img">
     </div>
-    <div class="user__button--setting">
+<!--     <div class="user__button--setting">
       <router-link to="">设置</router-link>
-    </div>
+    </div> -->
     <div class="user__username"><p>先生</p></div>
   </div>
 
@@ -35,7 +35,7 @@
       return {
         orderType:[{
           type:'全部订单',
-          to:'/'
+          to:''
           ,
         }, {
           type:'待付款',
@@ -55,7 +55,7 @@
   .user__header {
     height: 1.2rem;
     overflow: hidden;
-    background: yellow;
+    background-color: #3f6ed9;
     font-size: 14px;
   }
 
@@ -65,7 +65,7 @@
     width: .8rem;
     margin: .2rem .2rem 0rem .2rem;
     border-radius: 50%;
-    background-color: pink;
+    background-color: transparent;
     & .avatar__img {
       height: .8rem;
       width: .8rem;
@@ -76,6 +76,7 @@
     font-size: 30px;
     margin: .6rem .8rem 0 0;
     transform: translateY(-50%);
+    color: white;
   }
 
   .user__button--setting {
