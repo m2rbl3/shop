@@ -22,7 +22,6 @@ const footer = () => import('@/components/v-footer');
 
 Vue.use(VueRouter);
 const router = new VueRouter({
-  mode:"history",
   base:'/',
   routes:[{
     path:'/',
@@ -49,7 +48,7 @@ const router = new VueRouter({
       header: header,
       footer: footer
     }
-  },/* {
+  }, {
     path: '/order',
     name: '订单管理',
     components: {
@@ -57,7 +56,7 @@ const router = new VueRouter({
       header: header,
       footer: footer
     }
-  },*/ {
+  }, {
     path: '/product',
     name: '产品详情',
     components: {
