@@ -2,7 +2,7 @@
   <div class="change-price">
     <span class="count">
       <button @click="countSub()" class="icon-subtract">-</button>
-        <input v-model="count" class="input-count">
+        <input type="number" v-model="count" class="input-count">
       <button @click="countplus()" class="icon-add">+</button>
     </span>
   </div>
@@ -19,8 +19,10 @@
           return this.product.count;
         },
         set(val){
-          this.$store.commit('CHANGE_PRODUCT_COUNT',parseFloat(val));
-          this.computeAllPrice();
+          if(val){
+            this.$store.commit('CHANGE_PRODUCT_COUNT',parseFloat(val));
+            this.computeAllPrice();
+          }
         }
       }
     },
