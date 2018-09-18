@@ -63,7 +63,7 @@ export default {
       if(state.shops.length === 0)
         return Vue.axios({
           // url:'http://119.23.212.109/api/shopList',
-          url:'https://119.23.212.109/api/shopList',
+          url:'https://www.easy-mock.com/mock/5b94f829dd236325f85bf8cc/example/mock',
           method: 'get'
          })
          .then( res => commit( 'LOAD_SHOP_LIST', res.data ))
