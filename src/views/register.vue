@@ -103,7 +103,7 @@ export default {
 };
 </script>
  
-<style>
+<style scoped>
 .login-input-wrap {
   display: flex;
   width: 60%;
@@ -173,7 +173,7 @@ export default {
   overflow: auto;
 }
 
-.login__shadow::after {
+.shadow::after {
   content: "";
   display: inline-block;
   height: 100%;

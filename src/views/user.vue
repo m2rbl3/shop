@@ -24,7 +24,7 @@
     </ul>
   </div> -->
 
-  <router-link :to="logout()" class="btn--a user__quit">退出登录</router-link>
+  <router-link :to="logout" class="btn--a user__quit">退出登录</router-link>
 </div>
 </template>
 

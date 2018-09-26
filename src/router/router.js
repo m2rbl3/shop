@@ -103,18 +103,18 @@ const router = new VueRouter({
     path:'/pay',
     name: '付款',
     components:{
-      default:pay,
-      header:header
+      default: pay,
+      header: header
     }
   }]
 });
 
-router.beforeEach((to,from,next) => {
+router.beforeEach((to, from, next) => {
   if(to.path === '/login') {
     next();
-  }
-  else if(!store.state.hasLogin)
-    next({path: `/login?frompath=${to.path}`});
-  else next();
+  } else if(!store.state.hasLogin && to.path == '/user'){
+    console.log(from.path);
+    next('/login');
+  } else next();
  });
 export default router

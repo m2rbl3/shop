@@ -19,7 +19,7 @@
 
         <!-- 同一家店的商品列表 -->
         <ul>
-          <li v-for="(product, productIndex) in shop.products" class="list-product">
+          <li v-for="(product, productIndex) in shop.products" :key="product.productID" class="list-product">
             <div class="checkbox">
 
               <input :checked="product.checked" 
@@ -94,8 +94,7 @@ export default {
     },
     /*购物车空则提示，否则可以跳转付款*/
     canGoPay() {
-      if (!this.$store.state.hasLogin) this.$router.push("/login");
-      else if (this.$store.state.cartShops.length == 0) return "";
+      if (this.$store.state.cartShops.length == 0) return "";
       else return "/pay";
     }
   },

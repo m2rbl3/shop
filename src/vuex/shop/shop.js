@@ -67,7 +67,7 @@ export default {
           method: 'get'
          })
          .then( res => commit( 'LOAD_SHOP_LIST', res.data ))
-         .catch( err => console.log( err ));
+         .catch( err => console.error( err ));
     }
   }
 }
