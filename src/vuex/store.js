@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 import persistedState from "vuex-persistedstate";
 import shop from '@/vuex/shop/shop'
 import cart from '@/vuex/cart/cart'
-
+import user from '@/vuex/user/user'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -17,7 +17,7 @@ const store = new Vuex.Store({
   state:{
     ...shop.state,
     ...cart.state,
-    hasLogin: false,           //登陆token
+    ...user.state,
   },
   getters:{
     ...shop.getters,
@@ -25,9 +25,7 @@ const store = new Vuex.Store({
   mutations:{
     ...shop.mutations,
     ...cart.mutations,
-    ['CHANGE_LOGIN_TOKEN'](state) {
-      state.hasLogin = true;
-    }
+    ...user.mutations,
   },
   actions:{
     ...shop.actions

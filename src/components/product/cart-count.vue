@@ -20,7 +20,7 @@
         },
         set(val){
           if(val){
-            this.$store.commit('CHANGE_PRODUCT_COUNT',parseFloat(val));
+            this.$store.commit('CHANGE_PRODUCT_COUNT',parseInt(val));
             this.computeAllPrice();
           }
         }

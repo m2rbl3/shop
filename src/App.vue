@@ -65,7 +65,6 @@ export default {
   a {
     color: black;
     display: block;
-    text-decoration: none;
     cursor: pointer;
   }
 
@@ -82,12 +81,12 @@ export default {
     -moz-osx-font-smoothing: grayscale;
   }
 
-@font-face {
-  font-family: 'iconfont';  /* project id 836978 */
-  src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot');
-  src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_836978_6q048da1h76.woff') format('woff'),
-  url('//at.alicdn.com/t/font_836978_6q048da1h76.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_836978_6q048da1h76.svg#iconfont') format('svg');
-}
+  @font-face {
+    font-family: 'iconfont';  /* project id 836978 */
+    src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot');
+    src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_836978_6q048da1h76.woff') format('woff'),
+    url('//at.alicdn.com/t/font_836978_6q048da1h76.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_836978_6q048da1h76.svg#iconfont') format('svg');
+  }
 </style>

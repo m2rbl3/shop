@@ -16,6 +16,7 @@ const order = () => import('@/views/order');
 const product = () => import('@/views/product');
 const cart = () => import('@/views/cart');
 const login = () => import('@/views/login');
+const register = () => import('@/views/register')
 const pay = () => import('@/views/pay');
 const header = () => import('@/components/v-header');
 const footer = () => import('@/components/v-footer');
@@ -33,13 +34,22 @@ const router = new VueRouter({
       footer: footer
     }
   }, {
-    path: '/shop',
+    path: '/shop/:shopIndex',
     name: '商店',
+    props: {
+      default: true,
+      header: false,
+      footer: false
+    },
     components: {
       default: shop,
       header: header,
       footer: footer
-    }
+    }, 
+    beforeEnter(to, from, next){
+      store.commit('LOAD_SHOP_TYPE',to.params.shopIndex);
+      next();
+    }  
   }, {
     path: '/user',
     name: '用户管理',
@@ -47,6 +57,10 @@ const router = new VueRouter({
       default: user,
       header: header,
       footer: footer
+    },
+    beforeEnter: (to, from, next) => {
+      console.log(store.state.hasLogin);
+      store.state.hasLogin ? next() : next('/login');
     }
   }, {
     path: '/order',
@@ -57,12 +71,17 @@ const router = new VueRouter({
       footer: footer
     }
   }, {
-    path: '/product',
-    name: '产品详情',
-    components: {
-      default: product,
-      header: header
-    }
+      name: '商品',
+      path:'/shop/:shopIndex/product/:productIndex',
+      components: {
+        default: product,
+        header: header
+      },
+      beforeEnter (to, from, next) {
+        store.commit('LOAD_SHOP_TYPE',to.params.shopIndex);
+        store.commit('LOAD_PRODUCT_DETAIL',to.params.productIndex);
+        next();
+      }
   }, {
     path: '/cart',
     name: '购物车',
@@ -75,6 +94,13 @@ const router = new VueRouter({
     name: '登陆',
     components:{
       default: login,
+      header: header
+    }
+  }, {
+    path: '/register',
+    name: '注册',
+    components:{
+      default: register,
       header: header
     }
   },{
@@ -92,7 +118,7 @@ const router = new VueRouter({
 //     next();
 //   }
 //   else if(!store.state.hasLogin)
-//     next({path:`/login?frompath=${to.path}`});
+//     next({path: `/login?frompath=${to.path}`});
 //   else next();
 //  });
 export default router

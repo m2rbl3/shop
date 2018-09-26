@@ -53,12 +53,18 @@
 </script>
 
 <style scoped>
+.change-price {
+  display: inline-flex;
+  justify-content: space-between;
+}
+
 .price {
   margin: auto 0;
   font-size: 20px;
   display: inline-block;
   color: red;
 }
+
 .price::after {
   content:'元';
 }

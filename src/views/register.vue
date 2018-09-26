@@ -14,11 +14,11 @@
     </form>
 
     <div class="other-link">
-      <router-link to="/register">免费注册</router-link>
+      <router-link to="/login">登录</router-link>
       <router-link to="">忘记密码</router-link>
     </div>
 
-    <button @click="login" class="login-submit">登录</button>
+    <button @click="register" class="login-submit">注册</button>
 
     <div v-show="toShowDialog" class="shadow">
       <div class="dialog">
@@ -40,7 +40,7 @@ export default {
       isDisplayUNX: "hidden",
       isDisplayPWX: "hidden",
       toShowDialog: false,
-      fromPath: "/"  //从哪里跳转
+      fromPath: "/" //从哪里跳转
     };
   },
   watch: {
@@ -72,28 +72,26 @@ export default {
       }
     },
     /*登陆验证*/
-    login() {
+    register() {
       const _self = this;
       this.axios({
         method: "post",
-        url: "/login",
+        url: "/register",
         data: {
           un: this.username,
           pw: this.password
         }
       })
         .then(res => {
-          console.log(typeof res.data, res.data);
-          if (res.data.code == 500) {
-            throw new Error("账号密码不对");
-          } else if (res.data.code == 200) {
-            _self.$store.commit("LOAD_USERNAME", res.data.name);
+          if (res.data.code === 200) {
             _self.$store.commit("CHANGE_LOGIN_TOKEN");
-            _self.$router.push(_self.fromPath);
+            _self.$router.replace('/login');
+          } else if(res.data.code === 500) {
+            throw new Error('已注册');
           }
         })
         .catch(rej => {
-          console.error(rej);
+          console.log(rej);
           _self.toShowDialog = true;
         });
     },

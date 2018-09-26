@@ -38,8 +38,8 @@
     methods:{
       loadTypeProduct(shopID,shopIndex){
         const _self = this; 
-        this.$store.commit('LOAD_SHOP_TYPE',shopIndex);
-        this.$router.push(`/shop?headName=${_self.$store.state.chooseShop.name}`);
+        this.$store.commit('LOAD_SHOP_TYPE', shopIndex);
+        this.$router.push(`/shop/${shopIndex}?headName=${_self.$store.state.chooseShop.name}`);
       }
     },
     created() {
@@ -48,18 +48,6 @@
     components:{
       swiper,search
     }
-    // update(){
-    //   this.$store.commit('LOAD_SHOP_LIST',this.shops);
-    //   this.$store.dispatch('LOAD_SHOP_LIST');
-    // },
-    // beforeRouteUpdate(to,from,next){
-    //   console.log(this.beforeRouteUpdate);
-    // },
-    // beforeRouteEnter(to,from,next) {
-    //    next( vm =>{
-    //     vm.$store.dispatch('LOAD_SHOP_LIST');
-    //   });
-    // }
   }
 </script>
 

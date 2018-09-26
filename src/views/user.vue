@@ -7,7 +7,7 @@
 <!--     <div class="user__button--setting">
       <router-link to="">设置</router-link>
     </div> -->
-    <div class="user__username"><p>先生</p></div>
+    <div class="user__username"><p>{{name}}</p></div>
   </div>
 
   <div class="user__order-act">
@@ -24,7 +24,7 @@
     </ul>
   </div>
 
-  <router-link to="/login" class="btn--a user__quit">退出登录</router-link>
+  <router-link :to="logout" class="btn--a user__quit">退出登录</router-link>
 </div>
 </template>
 
@@ -46,8 +46,18 @@
           to:'/'
         }]
       }
+    },
+    computed: {
+      name() {
+        return this.$store.state.username; 
+      }
+    },
+    methods:{
+      logout(){
+        this.$store.commit('LOGOUT');
+        return '/login'
+      }
     }
-    
   }
 </script>
   
@@ -73,8 +83,8 @@
   }
   
   .user__username {
-    font-size: 30px;
-    margin: .6rem .8rem 0 0;
+    font-size: 20px;
+    margin: .6rem 0 0 .8rem;
     transform: translateY(-50%);
     color: white;
   }

@@ -1,20 +1,23 @@
-[{
-  "name":"1店","shopID":12,"picSrc":"https://cn.vuejs.org/images/logo.png",
-  "types":
-  [{
-    "name":"电话","products":
-    [{
-      "productID":2,"name":"电脑","count":1,"price":100,"picSrc":"https://cn.vuejs.org/images/logo.png","expressPrice":"10","detail":"很棒","monthlySales":1000,"address":"广州",
-      "types":["黄色","蓝色","绿色"]
-    }, {
-      "productID":2,"name":"电脑","count":1,"price":100,"picSrc":"https://cn.vuejs.org/images/logo.png","expressPrice":"10","detail":"很棒","monthlySales":1000,"address":"广州",
-      "types":["黄色","蓝色","绿色"]
-    }, {
-      "productID":2,"name":"电脑","count":1,"price":100,"picSrc":"https://cn.vuejs.org/images/logo.png","expressPrice":"10","detail":"很棒","monthlySales":1000,"address":"广州",
-      "types":["黄色","蓝色","绿色"]
-    }, {
-      "productID":2,"name":"电脑","count":1,"price":100,"picSrc":"https://cn.vuejs.org/images/logo.png","expressPrice":"10","detail":"很棒","monthlySales":1000,"address":"广州",
-      "types":["黄色","蓝色","绿色"]
+{
+  "list|20-30": [{
+    "name": "@cword(3,6)",
+    "shopID|+1": 1,
+    "picSrc": "@image('200x200', '#4A7BF7', '商店')",
+    "types|5-10": [{
+      "name": "@cword(2, 5)",
+      "products|10-30": [{
+        "name": "@cword(2, 5)",
+        "productID|+1": 2,
+        "price": "@float(0, 99999, 2, 2)",
+        "expressPrice": "@integer(5, 40)",
+        "picSrc": "@image('100x100', '#4A7BF7', '商品')",
+        "detail": "@cparagraph",
+        "monthlySales": "@integer(10, 99999)",
+        "address": "@county(true)",
+        "types|2-5": [
+          "@cword(2, 5)"
+        ]
+      }]
     }]
   }]
-}]
+}

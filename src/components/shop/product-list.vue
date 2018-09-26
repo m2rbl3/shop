@@ -12,9 +12,10 @@
 </template>
 
 <script>
-  import { mapState,mapGetters } from 'vuex'
+  import {mapState, mapGetters} from 'vuex'
   export default {
     name:'product-list',
+    props:['shopIndex'],
     computed: {
       ...mapState({
         typeIndex: 'chooseTypeIndex'
@@ -24,10 +25,10 @@
       })
     },
     methods:{
-      loadProductDetail(productIndex,productName){
+      loadProductDetail (productIndex,productName) {
         const _self = this;
-        this.$store.commit('LOAD_PRODUCT_DETAIL',productIndex);
-        this.$router.push(`/product?headName=${productName}`);
+        this.$store.commit('LOAD_PRODUCT_DETAIL', productIndex);
+        this.$router.push(`/shop/${_self.shopIndex}/product/${productIndex}?headName=${productName}`);
       }
     }
   }

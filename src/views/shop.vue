@@ -1,7 +1,7 @@
 <template>
   <div class="shop">
     <ProductTypeList></ProductTypeList>
-    <ProductList></ProductList>
+    <ProductList :shopIndex='shopIndex'></ProductList>
   </div>
 </template>
 
@@ -12,7 +12,8 @@
 
   export default {
     name: "shop",
-    components: {ProductTypeList,ProductList}
+    props: ['shopIndex'],
+    components: {ProductTypeList, ProductList}
   }
 </script>
 

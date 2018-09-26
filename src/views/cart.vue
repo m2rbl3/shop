@@ -5,11 +5,15 @@
         <!-- 不同的店列表 -->
         <div class="shop-module">
           <div class="checkbox">
-            <input :checked="shop.checked" @click="shopAllSelect($event,shopIndex,shop.shopID)" 
-              type="checkbox" :id="shop.shopID" class="input-choose js-calcprice">
+            <input 
+              :id="shop.shopID" 
+              :checked="shop.checked" 
+              @click="shopAllSelect($event,shopIndex)" 
+              type="checkbox" 
+              class="input-choose">
             <label :for="shop.shopID" class="choose-label"></label>
           </div>
-          <router-link :to="'/shop?headName=' + shop.name" class="shop-name">{{shop.name}}</router-link>
+          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name">{{shop.name}}</router-link>
           <span class="icon--go">></span>
         </div>
 
@@ -19,13 +23,13 @@
             <div class="checkbox">
 
               <input :checked="product.checked" 
-                @click="checkedSync($event, shopIndex, productIndex)" 
                 :id="product.productID + product.type" 
                 :data-shop-id="shop.shopID" 
                 :data-price="product.price" 
                 :data-count="product.count" 
+                @click="checkedSync($event, shopIndex, productIndex)" 
                 type="checkbox"
-                class="input-choose js-checked js-calcprice">
+                class="input-choose">
 
               <label :for="product.productID + product.type" class="choose-label"></label>
             </div>
@@ -40,6 +44,7 @@
                   <span>{{product.type}}</span><span class="icon--go">></span>
                 </div>
                 <CartCount :shop-index="shopIndex" :product-index="productIndex"></CartCount>
+                <button @click="delCartProduct(shopIndex,productIndex)" class="btn-del">删除</button>
               </div>
           </li>
         </ul>
@@ -48,7 +53,7 @@
 
     <!-- 结算底栏 -->
     <div v-if="canGoPay" class="payment-module">
-      <div class="price all-price">总计：{{allPrice}}</div>
+      <div class="all-price">总计：{{allPrice}}</div>
       <router-link :to="canGoPay" class="payment btn--a">结算</router-link>
     </div>
 
@@ -56,261 +61,265 @@
     <div v-else class="no-product-tip">
       <p class="tip-text">你的购物车空空如也</p>
     </div>
-      
+  
     </div>
   </div>
 </template>
 
 <script>
-  import vue from 'vue'
-  import CartCount from '@/components/cart/cart-count'
-  export default {
-    name:'cart',
-    data(){
-      return{
-        isShopAllCheck:false
-      }
+import vue from "vue";
+import CartCount from "@/components/cart/cart-count";
+export default {
+  name: "cart",
+  computed: {
+    cartShops() {
+      return this.$store.state.cartShops;
     },
-    computed:{
-      cartShops() {
-        return this.$store.state.cartShops;
-      },
-      /*计算总价格*/
-      allPrice() {
-        if( this.cartShops.length > 0){
-          let allPriceCache = this.cartShops.map(
-            ( shop, si ) => 
-              shop.products.map(
-                ( product, pi) =>{
-                  if(product.checked)
-                    return parseFloat(product.allPrice);
+    /*计算总价格*/
+    allPrice() {
+      if (this.cartShops.length > 0) {
+        let allPriceCache = this.cartShops
+          .map(
+            (shop, si) =>
+              shop.products
+                .map((product, pi) => {
+                  if (product.checked) return parseFloat(product.allPrice);
                   else return 0;
-                }).reduce(( acc, cval) => acc + cval, 0) //各店的商品总价格
-            ).reduce(( acc, cval) => acc + cval, 0)  //所有店的商品总价格
-          return Math.ceil( 100 * allPriceCache ) / 100;
-        }
-        else return 0;
-      },
-      /*购物车空则提示，否则可以跳转付款*/
-      canGoPay(){
-        if( this.$store.state.cartShops.length == 0 ) return '';
-        else return '/pay'
-      }
-    },
-    watch:{
-      /*如果所有商品都全选了，商店的全选按钮也变成选择状态*/
-      cartShops:{
-        handler(cartShops){
-          const _self = this;
-          cartShops.forEach(
-            (shop,shopIndex) => {
-              if(shop.products.every(product =>  product.checked))
-                _self.$store.commit('SHOP_ALL_CHECK',{shopIndex,val: true});
-              else
-                _self.$store.commit('SHOP_ALL_CHECK',{shopIndex,val: false});
-            }
+                })
+                .reduce((acc, cval) => acc + cval, 0) //各店的商品总价格
           )
-        },
-        deep:true
-      }
+          .reduce((acc, cval) => acc + cval, 0); //所有店的商品总价格
+        return Math.ceil(100 * allPriceCache) / 100;
+      } else return 0;
     },
-    methods:{
-      /*全选反选并同步store选中状态*/
-      shopAllSelect( e,shopIndex,shopID){
+    /*购物车空则提示，否则可以跳转付款*/
+    canGoPay() {
+      if (!this.$store.state.hasLogin) this.$router.push("/login");
+      else if (this.$store.state.cartShops.length == 0) return "";
+      else return "/pay";
+    }
+  },
+  watch: {
+    /* 如果所有商品都全选了，商店的全选按钮也变成选择状态 */
+    cartShops: {
+      handler(cartShops) {
         const _self = this;
-        let checkboxs = document.querySelectorAll('.js-checked');
-        checkboxs.forEach(
-          ( checkbox, productIndex ) => {
-            if( checkbox.dataset.shopId == shopID ){
-              if(e.target.checked){
-                _self.$store.commit('CHANGE_CART_PRODUCT_DATA',
-                   { shopIndex, productIndex, prop:'checked', val:true }
-                )
-              }
-              else {
-                 _self.$store.commit('CHANGE_CART_PRODUCT_DATA',
-                   { shopIndex, productIndex, prop:'checked', val:false }
-                )
-              }
-            }
-          }
-        );
+        cartShops.forEach((shop, shopIndex) => {
+          console.log(shop.products.length);
+          /* 如果商店商品列表为, 则删除该商店 */
+          if (shop.products.length === 0)
+            _self.$store.commit("DEL_CART_SHOP", shopIndex);
+          /* 如果全部商品都checked了, 则同步商品全选按钮checked */ else if (
+            shop.products.every(product => product.checked)
+          )
+            _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: true });
+          else _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: false });
+        });
       },
-      /*与store同步checked状态*/
-      checkedSync(e,shopIndex,productIndex){
-        if(e.target.checked)
-          this.$store.commit('CHANGE_CART_PRODUCT_DATA',
-            { shopIndex, productIndex, prop:'checked', val:true }
-          );
-        else this.$store.commit('CHANGE_CART_PRODUCT_DATA',
-            { shopIndex, productIndex, prop:'checked', val:false }
-        )
-      }
+      deep: true
+    }
+  },
+  methods: {
+    /*全选反选并同步store选中状态*/
+    shopAllSelect(e, shopIndex) {
+      const _self = this;
+
+      this.$store.commit("SHOP_ALL_CHECK", {
+        shopIndex,
+        val: e.target.checked
+      });
+      if (!!e.target.checked)
+        this.cartShops[shopIndex].products.forEach((product, productIndex) => {
+          _self.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+            shopIndex,
+            productIndex,
+            prop: "checked",
+            val: true
+          });
+        });
+      else
+        this.cartShops[shopIndex].products.forEach((product, productIndex) => {
+          _self.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+            shopIndex,
+            productIndex,
+            prop: "checked",
+            val: false
+          });
+        });
     },
-    components:{CartCount}
-  }
+    /*与store同步checked状态*/
+    checkedSync(e, shopIndex, productIndex) {
+      if (!!e.target.checked)
+        this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+          shopIndex,
+          productIndex,
+          prop: "checked",
+          val: true
+        });
+      else
+        this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+          shopIndex,
+          productIndex,
+          prop: "checked",
+          val: false
+        });
+    },
+    /*删除购物车某商品*/
+    delCartProduct(shopIndex, productIndex) {
+      this.$store.commit("DEL_CART_PRODUCT", { shopIndex, productIndex });
+    }
+  },
+  created() {
+    // this.$store.commit('')
+  },
+  // mounted(){
+  //   _self = this;
+  //   console.log(this);
+  //   this.cartShops.forEach((shop, shopIndex) => {
+  //     _self.$watch(`cartShops[${shopIndex}].products`, (newval, oldval) => {
+  //       if(newval.length === 0) _self.$store.commit('DEL_CART_SHOP', shopIndex);
+  //     });
+  //   });
+  // },
+  components: { CartCount }
+};
 </script>
 
 <style scoped>
+.cart-list {
+  margin-bottom: 0.4rem;
+}
 
-  .list-shop {
-    margin:.1rem auto;
-/*    padding: .1rem;*/
-    font-size: 16px;
-    background-color: white;
-  }
-  
-  .shop-module {
-    padding: .1rem;
-    font-size: 20px;
-    display: flex;
-    border-bottom: 1px solid #DDD;
-  }
+.list-shop {
+  margin: 0.1rem auto;
+  /*    padding: .1rem;*/
+  font-size: 16px;
+  background-color: white;
+}
 
-    .checkbox {
-      font-size: 20px;
-      margin: auto 0;
-    }
+.shop-module {
+  padding: 0.1rem;
+  font-size: 20px;
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
 
-      .input-choose {
-        display: none;
-      }
+.checkbox {
+  font-size: 20px;
+  margin: auto 0;
+}
 
-      .choose-label {
-        height: .15rem;
-        width: .15rem;
-        display: inline-block;
-        background-color: #fff;
-        border: 1px solid gray;
-        border-radius: 50%;
-      }
-      
-      .input-choose:checked + .choose-label{
-        background-color:#6288f7;
-      }
+.input-choose {
+  display: none;
+}
 
-    .shop-name {
-      margin-left: .5em;
-      display: inline-block;
-    }
+.choose-label {
+  height: 0.15rem;
+  width: 0.15rem;
+  display: inline-block;
+  background-color: #fff;
+  border: 1px solid gray;
+  border-radius: 50%;
+}
 
-    .icon--go {
-      margin-left: .5em;
-    }
+.input-choose:checked + .choose-label {
+  background-color: #6288f7;
+}
 
+.shop-name {
+  margin-left: 0.5em;
+  display: inline-block;
+}
 
-  .list-product {
-    padding: .1rem;
-    display:flex;
-    flex-direction: row;
-  }
+.icon--go {
+  margin-left: 0.5em;
+}
 
-  .list-product + .list-product {
-    border-top: 1px solid #DDD;
-  }
+.list-product {
+  padding: 0.1rem;
+  display: flex;
+  flex-direction: row;
+}
 
+.list-product + .list-product {
+  border-top: 1px solid #ddd;
+}
 
-  .pic-wrap {
-    margin: auto;
-    margin-left: .5em;
-  }
+.pic-wrap {
+  margin: auto;
+  margin-left: 0.5em;
+}
 
-    .preview-pic {
-      height: 1rem;
-      width: 1rem;
-    }
-  
+.preview-pic {
+  height: 1rem;
+  width: 1rem;
+}
 
-  .product-module {
-    margin: auto;
-    padding: 0 1em;
-    display: inline-block;
-    flex-grow: 1;
-  }
-    .product-name {
-      
-    }
+.product-module {
+  margin: auto;
+  padding: 0 1em;
+  display: inline-block;
+  flex-grow: 1;
+}
 
-    .choose-type {
-      margin: 1em auto;
-      background-color: #DDD;
-    }
+.choose-type {
+  margin: 1em auto;
+  background-color: #ddd;
+}
 
-    .change-price {
-      display: flex;
-      justify-content: space-between;
-    }
+.btn-del {
+  margin-left: 1em;
+  padding: 0.5em;
+  font-size: 20px;
+  line-height: 1;
+  color: white;
+  background-color: red;
+}
 
-      .price {
-        width: 60%;
-        margin: auto 0;
-        font-size: 20px;
-        display: inline-block;
-        color: red;
-      }
-      .price::after {
-        content:'元';
-      }
+.payment-module {
+  height: 0.4rem;
+  position: fixed;
+  display: flex;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-color: white;
+  text-align: center;
+}
 
-    .count {
-      display: flex;
-    }
+.all-price {
+  width: 60%;
+  margin: auto 0;
+  font-size: 20px;
+  line-height: 0.4rem;
+  flex-grow: 1;
+  display: inline-block;
+  color: red;
+}
 
-      .icon-subtract,.icon-add {
-        padding: .5em;
-        font-size: 20px;
-        line-height: 1;
-      }
+.all-price::after {
+  content: "元";
+}
 
-      .input-count {
-        width: 2.5em;
-        margin: auto 0;
-        font-size: 25px;
-        text-align: center;
-      }
+.payment {
+  margin: auto;
+  line-height: 0.4rem;
+  color: white;
+  background-color: red;
+  flex-grow: 1;
+}
 
-      .input-count:focus {
-        outline-color: red;
-      }
-
-  .payment-module {
-    position:fixed;
-    /*position: sticky;*/
-    display: flex;
-    left: 0;right: 0;
-    bottom: 0;
-    overflow: hidden;
-    background-color: white; 
+.no-product-tip {
+  height: 3rem;
+  margin: auto;
+  padding: ;
+  & .tip-text {
     text-align: center;
+    font-size: 30px;
+    line-height: 3rem;
+    vertical-align: middle;
+    color: #aaa;
   }
-  
-  .all-price {
-    margin: auto 0;
-    /*padding: 1em;*/
-    flex-grow: 1;
-  }
-
-  .payment {
-    margin: auto;
-    padding: 1em;
-    color: white;
-    background-color: red;
-    flex-grow: 1;
-  }
-
-  .no-product-tip {
-    height: 3rem;
-    margin: auto;
-    padding: ;
-    & .tip-text{
-      text-align: center;
-      font-size: 30px;
-      line-height: 3rem;
-      vertical-align: middle;
-      color: #AAA;
-    }
-  }
-
-
-
+}
 </style>

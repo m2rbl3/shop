@@ -1,7 +1,7 @@
 <template>
     <div class="product-footer">
       <div class="all-price">总价格：<span class="color-red">{{allPrice}}</span></div>
-      <router-link to="pay" class="buy">购买</router-link>
+      <router-link @click="checklogin" to="pay" class="buy">购买</router-link>
       <div @click="addCart" class="add-cart btn--a">添加进购物车</div>
     </div>
 </template>
@@ -17,7 +17,7 @@
       allPrice(){
         const _self = this;
         if(this.$store.state.productCache.allPrice === undefined)
-          this.$store.commit('CART_PRODUCT_ALLPRICE',this.productCache.price);
+          this.$store.commit('CART_PRODUCT_ALLPRICE', this.productCache.price);
         return this.productCache.allPrice;
       },
       showChooseType(){
@@ -32,20 +32,26 @@
     methods:{
       addCart(){
         const _self = this;
-        /*已勾选产品类型提交，否则打开选择页面*/
+        /* 已勾选产品类型提交 */
         if(this.productCache.type !== undefined) {
-          let {name,shopID} = this.$store.state.chooseShop;
-          let shopCache = JSON.parse( JSON.stringify({ name, shopID, checked:false,products:[] }));
+          let {name, shopID} = this.$store.state.chooseShop;
+          let shopCache = JSON.parse(JSON.stringify({name, shopID, checked: false, products: []}));
           shopCache.products.push(_self.$store.state.productCache);
+          console.log(shopCache);
           this.$store.commit('ADD_TO_CART',shopCache);
-          this.$store.commit('PRODUCT_CACHE'); //把商品推进购物车后，清空缓存
           this.jumpToCart();
+          this.$store.commit('PRODUCT_CACHE');  //把商品推进购物车后，清空缓存
         }
+        /*否则打开选择页面*/
         else
          this.$store.commit('SHOW_CHOOSE_TYPE',true);
       },
       jumpToCart(){
         this.$router.push('/cart?headName=购物车');
+      },
+      checkLogin(){
+        if(!this.$store.hasLogin)
+          this.$router.push('/login');
       }
     },
     // updated(){
