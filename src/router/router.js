@@ -53,14 +53,10 @@ const router = new VueRouter({
   }, {
     path: '/user',
     name: '用户管理',
-    components:{
+    components: {
       default: user,
       header: header,
       footer: footer
-    },
-    beforeEnter: (to, from, next) => {
-      console.log(store.state.hasLogin);
-      store.state.hasLogin ? next() : next('/login');
     }
   }, {
     path: '/order',
@@ -113,12 +109,12 @@ const router = new VueRouter({
   }]
 });
 
-// router.beforeEach((to,from,next) => {
-//   if(to.path === '/login') {
-//     next();
-//   }
-//   else if(!store.state.hasLogin)
-//     next({path: `/login?frompath=${to.path}`});
-//   else next();
-//  });
+router.beforeEach((to,from,next) => {
+  if(to.path === '/login') {
+    next();
+  }
+  else if(!store.state.hasLogin)
+    next({path: `/login?frompath=${to.path}`});
+  else next();
+ });
 export default router

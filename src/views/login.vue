@@ -57,11 +57,11 @@ export default {
   beforeRouteEnter(to, from, next) {
     /*密码验证*/
     next(vm => {
-      vm.fromPath = to.fullPath;
+      vm.fromPath = from.fullPath;
     });
   },
   beforeRouterUpdate(to, from, next) {
-    this.fromPath = to.fullPath;
+    this.fromPath = from.fullPath;
     next();
   },
   methods: {
