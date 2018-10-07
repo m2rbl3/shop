@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
-const users = "mongodb://localhost/users"
+const shop = "mongodb://localhost/shop"
 module.exports = () => {
-  mongoose.connect(users)
+  mongoose.connect(shop);
   let maxConnectTimes = 0
   return new Promise((resolve, reject) => {
     mongoose.connection.on('disconnected', () => {
       console.log('数据库连接异常')
       if (maxConnectTimes < 3) {
         maxConnectTimes++;
-        mongoose.connect(users);
+        mongoose.connect(shop);
       } else {
         reject(err);
         throw new Error('数据库无法重连')
@@ -18,7 +18,7 @@ module.exports = () => {
       console.log('数据库错误')
       if (maxConnectTimes < 3) {
         maxConnectTimes++;
-        mongoose.connect(users);
+        mongoose.connect(shop);
       } else {
         reject(err);
         throw new Error('数据库错误')

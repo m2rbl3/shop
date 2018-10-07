@@ -8,13 +8,13 @@
       <div class="title">{{chooseProduct.name}}</div>
       <div class="price">{{chooseProduct.price}}</div>
       <div class="other">
-        <div>快递费{{chooseProduct.expressPrice}}</div>
-        <div>月销量{{chooseProduct.monthlySales}}</div>
-        <div>地址{{chooseProduct.address}}</div>
+        <span>快递费：{{chooseProduct.expressPrice}}</span>
+        <span>月销量：{{chooseProduct.monthlySales}}</span>
+        <div>地址：{{chooseProduct.address}}</div>
       </div>
     </div>
 
-    <div @click="showChooseType" class="btn--choose-type">请选择商品类型</div>
+    <div @click="showChooseType" class="btn--choose-type"><i class="iconfont">&#xe627;</i>请选择商品类型</div>
     <div class="product-detail">{{chooseProduct.detail}}</div>
   <chooseProductType v-show="isEject"></chooseProductType>
   <ProductFooter></ProductFooter>
@@ -71,12 +71,6 @@
       font-size: 20px;
       color: red;
     }
-
-    .other {
-      display: flex;
-      justify-content: space-between;
-    }
-
 
   .btn--choose-type {
     line-height: .4rem;

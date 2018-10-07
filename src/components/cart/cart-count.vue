@@ -10,7 +10,7 @@
 
 <script>
   export default {
-    props:['productIndex','shopIndex'],
+    props:['productIndex', 'shopIndex'],
     computed:{
       product:{
         get(){
@@ -31,7 +31,7 @@
         },
         set(val){
           if(val){
-            this.product = { prop: 'count', val: parseInt(val) };
+            this.product = {prop: 'count', val: parseInt(val)};
             this.computeAllPrice();
           }
         }
@@ -46,7 +46,7 @@
       },
       computeAllPrice(){
         let allPriceCache = Math.ceil(this.product.price * this.product.count * 100) / 100;
-        this.product = { prop:'allPrice', val: allPriceCache };
+        this.product = {prop: 'allPrice', val: allPriceCache};
       }
   }
 }

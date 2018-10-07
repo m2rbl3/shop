@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="cart-list">
-      <div v-for="(shop, shopIndex) in cartShops" class="list-shop">
+      <div :key="shop.shopID" v-for="(shop, shopIndex) in cartShops" class="list-shop">
         <!-- 不同的店列表 -->
         <div class="shop-module">
           <div class="checkbox">
@@ -13,7 +13,7 @@
               class="input-choose">
             <label :for="shop.shopID" class="choose-label"></label>
           </div>
-          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name">{{shop.name}}</router-link>
+          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name"><i class="iconfont">&#xe601;</i>{{shop.name}}</router-link>
           <span class="icon--go">></span>
         </div>
 
@@ -43,8 +43,10 @@
                 <div class="choose-type btn--a">
                   <span>{{product.type}}</span><span class="icon--go">></span>
                 </div>
-                <CartCount :shop-index="shopIndex" :product-index="productIndex"></CartCount>
-                <button @click="delCartProduct(shopIndex,productIndex)" class="btn-del">删除</button>
+                <div class="btn-wrap">
+                  <CartCount :shop-index="shopIndex" :product-index="productIndex"></CartCount>
+                  <button @click="delCartProduct(shopIndex,productIndex)" class="btn-del">删除</button>
+                </div>
               </div>
           </li>
         </ul>
@@ -52,71 +54,47 @@
     </div>
 
     <!-- 结算底栏 -->
-    <div v-if="canGoPay" class="payment-module">
+    <div v-if="hasProducts" class="payment-module">
       <div class="all-price">总计：{{allPrice}}</div>
-      <router-link :to="canGoPay" class="payment btn--a">结算</router-link>
+      <a @click="canGoPay" class="payment btn--a">结算</a>
+      <tip-dialog ref="tip">请选择需要结算的商品</tip-dialog>
     </div>
-
     <!-- 购物车无商品提示 -->
     <div v-else class="no-product-tip">
       <p class="tip-text">你的购物车空空如也</p>
-    </div>
-  
     </div>
   </div>
 </template>
 
 <script>
 import vue from "vue";
-import CartCount from "@/components/cart/cart-count";
+import CartCount from "@/components/cart/cart-count"
+import tipDialog from '@/components/tip-dialog'
 export default {
   name: "cart",
   computed: {
     cartShops() {
       return this.$store.state.cartShops;
     },
+
     /*计算总价格*/
     allPrice() {
       if (this.cartShops.length > 0) {
-        let allPriceCache = this.cartShops
-          .map(
-            (shop, si) =>
-              shop.products
-                .map((product, pi) => {
+        let allPriceCache = this.cartShops.map((shop, si) =>
+              shop.products.map((product, pi) => {
                   if (product.checked) return parseFloat(product.allPrice);
                   else return 0;
-                })
-                .reduce((acc, cval) => acc + cval, 0) //各店的商品总价格
-          )
-          .reduce((acc, cval) => acc + cval, 0); //所有店的商品总价格
+              }).reduce((acc, cval) => acc + cval, 0) //各店的商品总价格
+        ).reduce((acc, cval) => acc + cval, 0); //所有店的商品总价格
         return Math.ceil(100 * allPriceCache) / 100;
       } else return 0;
     },
-    /*购物车空则提示，否则可以跳转付款*/
-    canGoPay() {
-      if (this.$store.state.cartShops.length == 0) return "";
+
+    /*购物车空则提示，否则显示付款底栏*/
+    hasProducts() {
+      if (this.cartShops.length == 0) return "";
       else return "/pay";
-    }
-  },
-  watch: {
-    /* 如果所有商品都全选了，商店的全选按钮也变成选择状态 */
-    cartShops: {
-      handler(cartShops) {
-        const _self = this;
-        cartShops.forEach((shop, shopIndex) => {
-          console.log(shop.products.length);
-          /* 如果商店商品列表为, 则删除该商店 */
-          if (shop.products.length === 0)
-            _self.$store.commit("DEL_CART_SHOP", shopIndex);
-          /* 如果全部商品都checked了, 则同步商品全选按钮checked */ else if (
-            shop.products.every(product => product.checked)
-          )
-            _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: true });
-          else _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: false });
-        });
-      },
-      deep: true
-    }
+    },
   },
   methods: {
     /*全选反选并同步store选中状态*/
@@ -146,7 +124,8 @@ export default {
           });
         });
     },
-    /*与store同步checked状态*/
+
+    /* 与store同步checked状态 */
     checkedSync(e, shopIndex, productIndex) {
       if (!!e.target.checked)
         this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
@@ -162,25 +141,33 @@ export default {
           prop: "checked",
           val: false
         });
+
+      /* 如果所有商品都全选了，商店的全选按钮也变成选择状态 */
+      (cartShops => {
+        const _self = this;
+        cartShops.forEach((shop, shopIndex) => {
+          /* 如果全部商品都checked了, 则同步商品全选按钮checked */ 
+          if (shop.products.every(product => product.checked))
+            _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: true });
+          else _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: false });
+        });
+      })(this.cartShops);
     },
+
     /*删除购物车某商品*/
     delCartProduct(shopIndex, productIndex) {
       this.$store.commit("DEL_CART_PRODUCT", { shopIndex, productIndex });
+      /* 如果商店商品列表为空, 则删除该商店 */
+      if (this.cartShops[shopIndex].products.length === 0)
+        this.$store.commit("DEL_CART_SHOP", shopIndex);
+    },
+    canGoPay(){
+      if(this.allPrice == 0) {
+        this.$refs.tip.toShowDialog(true);
+      } else this.$router.push('/pay');
     }
   },
-  created() {
-    // this.$store.commit('')
-  },
-  // mounted(){
-  //   _self = this;
-  //   console.log(this);
-  //   this.cartShops.forEach((shop, shopIndex) => {
-  //     _self.$watch(`cartShops[${shopIndex}].products`, (newval, oldval) => {
-  //       if(newval.length === 0) _self.$store.commit('DEL_CART_SHOP', shopIndex);
-  //     });
-  //   });
-  // },
-  components: { CartCount }
+  components: {CartCount, tipDialog}
 };
 </script>
 
@@ -264,6 +251,10 @@ export default {
 .choose-type {
   margin: 1em auto;
   background-color: #ddd;
+}
+
+.btn-wrap {
+  white-space: nowrap;
 }
 
 .btn-del {

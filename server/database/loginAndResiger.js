@@ -5,15 +5,16 @@ exports.login = async ({un, pw}) => {
   await connect();
   return new Promise ((res, rej) => {
     try{
-      User.findOne({un: un}, async (err, doc) => {
+      if(!un || !pw) res({code: 500});
+      User.findOne({un}, async (err, doc) => {
         if(err) 
           console.log(err)
         else if(doc.pw == pw){
           await User.update({un: un}, {"$set": {lastLoginAt: Date.now()}});
-          console.log('登陆成功');
+          console.info('登陆成功' + " " + Date.now());
           res({code:200, name: doc.name});
         } else {
-          console.log('登录失败');
+          console.error('登录失败' + " " +Date.now());
           res({code: 500});
         }
       });
@@ -23,19 +24,20 @@ exports.login = async ({un, pw}) => {
   });
 }
 
-exports.register = async ({un, pw, name}) => {
+exports.register = async ({un, pw, name = `u_${Date.now().toFixed()}`}) => {
   await connect();
   return new Promise ((res, rej) => {
     try {
       User.findOne({un: un}, (err, doc) => {
-        if(doc) {
+        if(err) console.error(err);
+        else if(doc) {
           console.log('注册失败');
           res({code:500});
         } else {
           User.create({
             un,
             pw,
-            name: name || 'shit',
+            name,
             createAt: Date.now(),
             lastLoginAt: Date.now()
           });
@@ -44,7 +46,7 @@ exports.register = async ({un, pw, name}) => {
         }
       });
     } catch(e) {
-      console.log(e);
+      console.error(e);
     }
   });
 }

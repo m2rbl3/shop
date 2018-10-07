@@ -4,27 +4,27 @@
     <div class="user__avatar">
       <img class="avatar__img">
     </div>
-<!--     <div class="user__button--setting">
+<!-- <div class="user__button--setting">
       <router-link to="">设置</router-link>
     </div> -->
-    <div class="user__username"><p>先生</p></div>
+    <div class="user__username"><p>{{$store.state.name}}</p></div>
   </div>
 
-  <!-- <div class="user__order-act">
+  <div class="user__order-act">
     <ul>
-      <li v-for="orderType of orderTypes"><router-link  :to="list.to" class="btn--a"><img>{{list.type}}</router-link></li>
+      <li :key="orderType.to" v-for="orderType of orderTypes"><router-link :to="orderType.to" class="btn--a"><img>{{orderType.type}}</router-link></li>
     </ul>
   </div>
 
   <div class="user__nav">
     <ul>
-      <li v-for="nav of navs">
+      <li :key="nav.to" v-for="nav of navs">
         <router-link :to="nav.to" class="nav__list btn--a"><img class="icon">{{nav.type}}<span class="icon--go">&#155;</span></router-link>
       </li>
     </ul>
-  </div> -->
+  </div>
 
-  <router-link :to="logout" class="btn--a user__quit">退出登录</router-link>
+  <a @click="logout" class="btn--a user__quit">退出登录</a>
 </div>
 </template>
 
@@ -32,28 +32,24 @@
 export default {
   data() {
     return {
-      orderType: [
+      orderTypes: [
         {
           type: "全部订单",
-          to: ""
-        },
-        {
-          type: "待付款",
-          to: "/"
+          to: "/order"
         }
       ],
       navs: [
         {
           type: "全部订单",
-          to: "/"
+          to: "/order"
         }
       ]
-    };
+    }
   },
   methods: {
     logout() {
       this.$store.commit("LOGOUT");
-      return '/login';
+      this.$router.push('/login');
     }
   }
 };
@@ -65,6 +61,7 @@ export default {
   overflow: hidden;
   background-color: #3f6ed9;
   font-size: 14px;
+  position: relative;
 }
 
 .user__avatar {
@@ -81,9 +78,15 @@ export default {
 }
 
 .user__username {
-  font-size: 30px;
-  margin: 0.6rem 0.8rem 0 0;
+  width: 1.75rem;
+  font-size: 20px;
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
   transform: translateY(-50%);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: white;
 }
 
@@ -154,13 +157,14 @@ export default {
   border: 1px solid red;
   border-radius: 25px;
   font-size: 20px;
-  background-color: transparent;
-  color: red;
+  background-color: red;
+  color: white;
+
   text-align: center;
 }
 
 .user__quit:hover {
-  background-color: red;
-  color: white;
+  background-color: transparent;
+  color: red;
 }
 </style>

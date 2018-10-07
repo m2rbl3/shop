@@ -7,7 +7,8 @@ const static = require('koa-static')
 const path = require('path')
 const fs = require('fs')
 const shops = require('./mock.js')
-const loginAndRegister = require('./database/loginAndResiger');
+const loginAndRegisterModel = require('./database/loginAndResiger')
+const orderModel = require('./database/order')
 
 /* 获取商店数据 */
 const shopList = new Router();
@@ -20,25 +21,31 @@ shopList.get('/shopList', (ctx, next) => {
 /* 登陆验证 */
 const login = new Router();
 login.post('/login', async (ctx, next) => {
-  const {un, pw} = ctx.request.body;
-  ctx.body = await loginAndRegister.login({un, pw});
+  ctx.body = await loginAndRegisterModel.login(ctx.request.body);
   next();
 });
 
 /* 注册 */
 const register = new Router();
 register.post('/register', async (ctx, next) => {
-  const {un, pw, name} = ctx.request.body;
-  ctx.body = await loginAndRegister.register({
-    un,
-    pw,
-    name: name || `user_${Date.now()}`
-  });
+  ctx.body = await loginAndRegisterModel.register(ctx.request.body);
   next();
 });
 
-register.get('/register', async (ctx, next) => {
-  ctx.body = ctx;
+/* 账单 */
+const order = new Router();
+order.post('/order/upload', async(ctx, next) => {
+  ctx.body = await orderModel.upload(ctx.request.body);
+  next();
+})
+
+order.post('/order/download', async(ctx, next) => {
+  ctx.body = await orderModel.download(ctx.request.body);
+  next();
+});
+
+order.post('/order/delete', async(ctx, next) => {
+  ctx.body = await orderModel.delete(ctx.request.body);
   next();
 });
 
@@ -50,7 +57,9 @@ api.use('/api',
   login.routes(),
   login.allowedMethods(),
   register.routes(),
-  register.allowedMethods()
+  register.allowedMethods(),
+  order.routes(),
+  order.allowedMethods()
 );
 
 /* app */
@@ -62,5 +71,5 @@ app.use(cors({
 app.use(api.routes(), api.allowedMethods());
 
 app.listen(80, () => {
-  console.log('挂載成功');
+  console.log('监听成功');
 });

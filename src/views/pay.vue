@@ -10,15 +10,23 @@
 <script>
   export default {
     name:'付款',
-    mounted(){
-      const _self = this;
-      setTimeout( function(){
-        _self.$router.replace('/');
-      }, 3000);
+    async mounted(){
+      await this.uploadPay();
+      this.$router.replace('/order');
     },
     methods:{
-      clearCart(){
-        this.$store.commit('CLEAR_CART')
+      uploadPay(){
+        return this.axios({
+          url: 'order/upload',
+          method: 'post',
+          data: {
+            un: this.$store.state.un,
+            shops: this.$store.state.cartShops
+          }
+        }).then(res => {
+          if(res.data === 200) this.$store.commit('CLEAR_CART');
+          else if(res.data === 500) console.error('订单上传错误');
+        });
       }
     }
   }

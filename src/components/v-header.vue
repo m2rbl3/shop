@@ -59,13 +59,14 @@
   .icon-back {
     margin: auto;
     margin-left: .5em;
-    font-size: 30px;
+    font-size: .25rem;
   }
 
 .header-title {
   margin: auto;
-  font-size: 30px;
-  line-height: 1;
+  font-size: .25rem;
+  vertical-align: middle;
+  line-height: .4rem;
   color: white;
 }
 </style>

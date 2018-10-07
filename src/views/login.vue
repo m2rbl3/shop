@@ -20,18 +20,13 @@
 
     <button @click="login" class="login-submit">登录</button>
 
-    <div v-show="toShowDialog" class="shadow">
-      <div class="dialog">
-        <div class="dialog-text"><span>你的用户名或者密码错误</span></div>
-        <div @click="cancelDialog" class="dialog-determine">确定</div>
-      </div>
-    </div>
-
+    <tip-dialog ref="tip">您输入的账号或者密码错误</tip-dialog>
   </div>
 </template>
 
 <script>
-import vue from "vue";
+import vue from "vue"
+import tipDialog from '@/components/tip-dialog'
 export default {
   data() {
     return {
@@ -39,7 +34,6 @@ export default {
       password: "",
       isDisplayUNX: "hidden",
       isDisplayPWX: "hidden",
-      toShowDialog: false,
       fromPath: "/"  //从哪里跳转
     };
   },
@@ -72,8 +66,7 @@ export default {
       }
     },
     /*登陆验证*/
-    login() {
-      const _self = this;
+    login(){
       this.axios({
         method: "post",
         url: "/login",
@@ -83,25 +76,21 @@ export default {
         }
       })
         .then(res => {
-          console.log(typeof res.data, res.data);
           if (res.data.code == 500) {
-            throw new Error("账号密码不对");
+            throw new Error("账号或密码错误");
           } else if (res.data.code == 200) {
-            _self.$store.commit("LOAD_USERNAME", res.data.name);
-            _self.$store.commit("CHANGE_LOGIN_TOKEN");
-            _self.$router.push(_self.fromPath);
+            this.$store.commit("LOAD_USERNAME", {name: res.data.name, un: this.username});
+            this.$store.commit("CHANGE_LOGIN_TOKEN");
+            this.$router.push('/');
           }
         })
         .catch(rej => {
           console.error(rej);
-          _self.toShowDialog = true;
+          this.$refs.tip.toShowDialog(true);
         });
-    },
-    /*隐藏登陆错误对话框*/
-    cancelDialog() {
-      this.toShowDialog = false;
     }
-  }
+  },
+  components: {tipDialog}
 };
 </script>
  

@@ -1,7 +1,7 @@
 <template>
     <div class="product-footer">
       <div class="all-price">总价格：<span class="color-red">{{allPrice}}</span></div>
-      <router-link @click="checklogin" to="pay" class="buy">购买</router-link>
+      <!-- <router-link @click="checklogin" to="pay" class="buy">购买</router-link> -->
       <div @click="addCart" class="add-cart btn--a">添加进购物车</div>
     </div>
 </template>

@@ -30,6 +30,6 @@ const store = new Vuex.Store({
   actions:{
     ...shop.actions
   },  
-  // plugins:[persistedState()]
+  plugins:[persistedState()]
 });
 export default store;

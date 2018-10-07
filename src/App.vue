@@ -80,13 +80,17 @@ export default {
     -webkit-text-stroke-width: 0.2px;
     -moz-osx-font-smoothing: grayscale;
   }
-
-  @font-face {
-    font-family: 'iconfont';  /* project id 836978 */
-    src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot');
-    src: url('//at.alicdn.com/t/font_836978_6q048da1h76.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_836978_6q048da1h76.woff') format('woff'),
-    url('//at.alicdn.com/t/font_836978_6q048da1h76.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_836978_6q048da1h76.svg#iconfont') format('svg');
+  
+  .iconfont::after {
+    content:' ';
   }
+
+@font-face {
+  font-family: 'iconfont';  /* project id 836978 */
+  src: url('//at.alicdn.com/t/font_836978_wt391koo4ca.eot');
+  src: url('//at.alicdn.com/t/font_836978_wt391koo4ca.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_836978_wt391koo4ca.woff') format('woff'),
+  url('//at.alicdn.com/t/font_836978_wt391koo4ca.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_836978_wt391koo4ca.svg#iconfont') format('svg');
+}
 </style>
