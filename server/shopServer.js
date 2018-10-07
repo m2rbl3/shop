@@ -10,43 +10,51 @@ const shops = require('./mock.js')
 const loginAndRegisterModel = require('./database/loginAndResiger')
 const orderModel = require('./database/order')
 
+const shop = new Router();
+shop.get('/shop', async (ctx, next) => {
+  ctx.type = 'html';
+  console.log('asdfs');
+  ctx.body = fs.readFileSync(path.join(__dirname, '../shop/index.html'));
+  await next();
+});
+
 /* 获取商店数据 */
 const shopList = new Router();
 const shopListPath = path.join(__dirname, '../api/shop.json');
-shopList.get('/shopList', (ctx, next) => {
+shopList.get('/shopList', async (ctx, next) => {
+  await next();
   ctx.body = shops;
-  next();
 });
 
 /* 登陆验证 */
 const login = new Router();
 login.post('/login', async (ctx, next) => {
+  await next();
   ctx.body = await loginAndRegisterModel.login(ctx.request.body);
-  next();
 });
 
 /* 注册 */
 const register = new Router();
 register.post('/register', async (ctx, next) => {
+  await next();
   ctx.body = await loginAndRegisterModel.register(ctx.request.body);
-  next();
 });
 
 /* 账单 */
 const order = new Router();
 order.post('/order/upload', async(ctx, next) => {
+  await next();
   ctx.body = await orderModel.upload(ctx.request.body);
-  next();
 })
 
 order.post('/order/download', async(ctx, next) => {
+  await next();
   ctx.body = await orderModel.download(ctx.request.body);
-  next();
 });
 
 order.post('/order/delete', async(ctx, next) => {
+  await next();
   ctx.body = await orderModel.delete(ctx.request.body);
-  next();
 });
 
 /* api */
@@ -65,9 +73,12 @@ api.use('/api',
 /* app */
 app.use(bodyParser());
 app.use(cors({
-    origin: '*',
-    allowMethods: ['GET', 'PUT', 'OPTION', 'POST']
+  origin: '*',
+  allowMethods: ['GET', 'PUT', 'OPTION', 'POST']
 }));
+
+app.use(shop.routes(), shop.allowedMethods());
+app.use(static(path.join(__dirname,'../shop')));
 app.use(api.routes(), api.allowedMethods());
 
 app.listen(80, () => {
