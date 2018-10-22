@@ -6,24 +6,51 @@ const Router = require('koa-router')
 const static = require('koa-static')
 const path = require('path')
 const fs = require('fs')
-const shops = require('./mock.js')
+// const shops = require('./mock.js')
 const loginAndRegisterModel = require('./database/loginAndResiger')
 const orderModel = require('./database/order')
+const shopModel = require('./database/shop')
 
-const shop = new Router();
-shop.get('/shop', async (ctx, next) => {
+const shopPage = new Router();
+shopPage.get('/shop', async (ctx, next) => {
   ctx.type = 'html';
-  console.log('asdfs');
   ctx.body = fs.readFileSync(path.join(__dirname, '../shop/index.html'));
   await next();
 });
 
-/* 获取商店数据 */
-const shopList = new Router();
-const shopListPath = path.join(__dirname, '../api/shop.json');
-shopList.get('/shopList', async (ctx, next) => {
+const shop = new Router();
+
+/* 获取商店列表 */
+shop.get('/shopList', async (ctx, next) => {
+  ctx.body = await shopModel.shopList(ctx.request.body);
   await next();
-  ctx.body = shops;
+});
+
+/* 搜索 */
+shop.get('/search', async (ctx, next) => {
+  ctx.body = await shopModel.search(ctx.query);
+  await next();
+});
+
+/* 获取商店产品类型 */
+shop.get('/shop/:shopIndex', async (ctx, next) => {
+  await next();
+  ctx.body = await shopModel.typesOfShop(ctx.params);
+  console.log('获取商店类型成功');
+});
+
+/* 获取商店选中类型的产品 */
+shop.get('/shop/:shopIndex/:typeIndex', async (ctx, next) => {
+  await next();
+  ctx.body = await shopModel.chooseTypeProducts(ctx.params);
+  console.log('获取商店选中类型商品成功');
+});
+
+/* 获取选中产品 */
+shop.get('/shop/:shopIndex/:typeIndex/:productIndex', async (ctx,next) => {
+  await next();
+  ctx.body = await shopModel.chooseProduct(ctx.params);
+  console.log('获取选中商品成功')
 });
 
 /* 登陆验证 */
@@ -42,16 +69,20 @@ register.post('/register', async (ctx, next) => {
 
 /* 账单 */
 const order = new Router();
+
+/* 上传订单 */
 order.post('/order/upload', async(ctx, next) => {
   await next();
   ctx.body = await orderModel.upload(ctx.request.body);
 })
 
+/* 获取订单 */
 order.post('/order/download', async(ctx, next) => {
   await next();
   ctx.body = await orderModel.download(ctx.request.body);
 });
 
+/* 删除订单 */
 order.post('/order/delete', async(ctx, next) => {
   await next();
   ctx.body = await orderModel.delete(ctx.request.body);
@@ -60,8 +91,8 @@ order.post('/order/delete', async(ctx, next) => {
 /* api */
 const api = new Router();
 api.use('/api',
-  shopList.routes(),
-  shopList.allowedMethods(),
+  shop.routes(),
+  shop.allowedMethods(),
   login.routes(),
   login.allowedMethods(),
   register.routes(),
@@ -77,7 +108,7 @@ app.use(cors({
   allowMethods: ['GET', 'PUT', 'OPTION', 'POST']
 }));
 
-app.use(shop.routes(), shop.allowedMethods());
+app.use(shopPage.routes(), shopPage.allowedMethods());
 app.use(static(path.join(__dirname,'../shop')));
 app.use(api.routes(), api.allowedMethods());
 

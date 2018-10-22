@@ -1,16 +1,31 @@
 <template>
   <div class="login">
     <div class="login-logo"><img></div>
-
+    <div v-show="isRedirect" class="top-tip">请您先登陆再完成操作</div>
     <form name="login" class="login-form">
+
       <div class="login-input-wrap">
-        <input v-model="username" class="login-input" type="text" placeholder="请输入用户名">
-        <span :style="{visibility:isDisplayUNX}" @click="clearInput('username')" class="login__clear">&#10006;</span>
+        <input v-model="username"
+          class="login-input"
+          type="text"
+          placeholder="请输入用户名">
+        <span :style="{visibility:isDisplayUNX}"
+          @click="clearInput('username')"
+          class="login__clear">&#10006;
+        </span>
       </div>
+
       <div class="login-input-wrap">
-        <input  v-model="password" class="login-input" type="password" placeholder="请输入用户密码">
-        <span :style="{visibility:isDisplayPWX}" @click="clearInput('password')" class="login__clear">&#10006;</span>
+        <input  v-model="password"
+          class="login-input"
+          type="password"
+          placeholder="请输入用户密码">
+        <span :style="{visibility:isDisplayPWX}"
+          @click="clearInput('password')"
+          class="login__clear">&#10006;
+        </span>
       </div>
+
     </form>
 
     <div class="other-link">
@@ -34,30 +49,32 @@ export default {
       password: "",
       isDisplayUNX: "hidden",
       isDisplayPWX: "hidden",
-      fromPath: "/"  //从哪里跳转
+      isRedirect: false
     };
   },
   watch: {
     /* 有输入则显示X号*/
     username() {
-      if (this.username !== "") this.isDisplayUNX = "visible";
-      else this.isDisplayUNX = "hidden";
+      if (this.username !== "") 
+        this.isDisplayUNX = "visible";
+      else 
+        this.isDisplayUNX = "hidden";
     },
     password() {
-      if (this.password !== "") this.isDisplayPWX = "visible";
-      else this.isDisplayPWX = "hidden";
+      if (this.password !== "") 
+        this.isDisplayPWX = "visible";
+      else
+        this.isDisplayPWX = "hidden";
     }
   },
-  beforeRouteEnter(to, from, next) {
+   beforeRouteEnter(to, from, next) {
     /*密码验证*/
     next(vm => {
-      vm.fromPath = from.fullPath;
+      if(vm.$route.query.redirect === "true")
+        vm.isRedirect = true;
+      vm.$store.commit('REMEMBER_FROM_PATH_TO_LOGIN', from.fullPath);
     });
-  },
-  beforeRouterUpdate(to, from, next) {
-    this.fromPath = from.fullPath;
-    next();
-  },
+  }, 
   methods: {
     clearInput(val) {
       if (typeof val == "string") {
@@ -79,9 +96,15 @@ export default {
           if (res.data.code == 500) {
             throw new Error("账号或密码错误");
           } else if (res.data.code == 200) {
-            this.$store.commit("LOAD_USERNAME", {name: res.data.name, un: this.username});
-            this.$store.commit("CHANGE_LOGIN_TOKEN");
-            this.$router.push('/');
+            this.$store.commit("LOAD_USERNAME", {
+              name: res.data.name,
+              un: this.username
+            });
+            this.$store.commit("CHANGE_LOGIN_TOKEN", true);
+            this.$router.push((this.$store.state.fromPath &&
+            this.$store.state.fromPath) ||
+            '/');
+            this.$store.commit('REMEMBER_FROM_PATH_TO_LOGIN', undefined);
           }
         })
         .catch(rej => {
@@ -95,6 +118,22 @@ export default {
 </script>
  
 <style scoped>
+.login {
+  position: relative;
+}
+
+.top-tip {
+  font-size: 17px;
+  line-height: 1.5;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: #fff;
+}
+
 .login-input-wrap {
   display: flex;
   width: 60%;

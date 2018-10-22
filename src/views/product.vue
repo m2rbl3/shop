@@ -16,37 +16,47 @@
 
     <div @click="showChooseType" class="btn--choose-type"><i class="iconfont">&#xe627;</i>请选择商品类型</div>
     <div class="product-detail">{{chooseProduct.detail}}</div>
-  <chooseProductType v-show="isEject"></chooseProductType>
-  <ProductFooter></ProductFooter>
+    <chooseProductType :chooseProduct="chooseProduct" v-show="isEject"></chooseProductType>
+    <ProductFooter></ProductFooter>
   </div>
 </template>
 
 <script>
   import ProductFooter from '@/components/product/product-footer'
   import chooseProductType from '@/components/product/choose-product-type'
-  import vue from 'vue'
+  import Vue from 'vue'
   export default {
     name:"product",
-    computed:{
-      chooseProduct(){
-        return this.$store.state.chooseProduct;
-      },
+    data(){
+      return{
+        chooseProduct: {}
+      }
+    },
+    computed: {
       isEject(){
         return this.$store.state.isEjectChooseType;
       }
     },
-    methods:{
+    methods: {
       showChooseType(){
         this.$store.commit('SHOW_CHOOSE_TYPE',true);
+      },
+      loadProductDetail(){
+        const shopIndex = this.$route.params.shopIndex,
+              typeIndex = this.$route.params.typeIndex,
+              productIndex = this.$route.params.productIndex;
+
+        return this.axios.get(`/shop/${shopIndex}/${typeIndex}/${productIndex}`)
+          .then(res => {
+            this.chooseProduct = res.data;
+            this.$store.commit('COPY_TO_CART', res.data);
+          });
       }
     },
-    created(){
-      this.$store.commit('SHOW_CHOOSE_TYPE',false);
+    created () {
+      this.loadProductDetail();
     },
-    update(){
-      this.$store.commit('SHOW_CHOOSE_TYPE',false);
-    },
-    components: { chooseProductType,ProductFooter }
+    components: { chooseProductType, ProductFooter }
   }
 </script>
 

@@ -1,7 +1,11 @@
 <template>
   <div class="product-type">
     <ul>
-      <li v-for="(type,typeIndex) in shop.types" @click="loadTypeProduct(typeIndex)" class="list-product-type">{{type.name}}</li>
+      <li :key="type.name" v-for="(type, typeIndex) in shop" 
+        class="list-product-type" 
+        @click="refreshTypeProduct(typeIndex)">
+        {{type.name}}
+      </li>
     </ul>
   </div>
 </template>
@@ -16,15 +20,31 @@
       })
     },
     methods: {
-      loadTypeProduct(typeIndex) {
-        this.$store.commit('LOAD_PRODUCT_TYPE',typeIndex);
+      refreshTypeProduct(typeIndex) {
+        let shopName = this.$route.query.headName,
+          shopIndex = this.$route.params.shopIndex;
+        this.$router.replace(`/shop/${shopIndex}/${typeIndex}?headName=${shopName}`)
+      },
+      loadTypeProduct(){
+        let shopName = this.$route.query.shopName,
+            shopIndex = this.$route.params.shopIndex,
+            typeIndex = this.$route.params.typeIndex;
+        this.$store.dispatch('LOAD_PRODUCT_TYPES', {
+          shopIndex,
+          typeIndex
+        });
       }
     },
-    beforeCreate(){
-      this.$store.commit('LOAD_PRODUCT_TYPE',0);
+    watch: {
+      "$route.path" (to, from) {
+        if(to.path == from.path)
+          this.loadTypeProduct();
+      }
     },
-    updated(){
-      this.$store.commit('LOAD_PRODUCT_TYPE',0);
+    async created() {
+      const shopIndex = this.$route.params.shopIndex;
+      await this.$store.dispatch('LOAD_SHOP_TYPES', shopIndex);
+      this.loadTypeProduct();
     },
   }
 </script>

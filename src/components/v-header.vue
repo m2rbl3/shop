@@ -12,12 +12,7 @@
   import vue from 'vue'  
   export default {
     name: 'TheHeader',
-    data(){
-      return{
-        // head: 'head'
-      }
-    },
-    computed:{
+    computed: {
       head(){
         if(this.$route.query.headName)
           return this.$route.query.headName;
@@ -27,8 +22,9 @@
     },
     methods:{
       back(){
-        // this.isBack = true;
-        this.$router.go(-1);
+        if(this.$route.path === '/login')
+          this.$router.push(this.$store.state.fromPath);
+        else this.$router.go(-1);
       }
     }
   }
@@ -44,7 +40,6 @@
   display: flex;
   font-size: 0;
   text-align: center;
-  /*border-bottom: 1px solid gray;*/
 }
 
 .order-back {

@@ -1,47 +1,46 @@
 <template>
 <div class="orders">
   <div :key="order._id" v-for="order in orders" class="order-list">
-    <div>
-      <div class="order-time"><i class="iconfont">&#xe6ed;</i>{{order.time}}</div>
-      <!-- <div @click="delOrder(order._id)">删除</div> -->
+    <div class="order-title">
+      <span class="order-time"><i class="iconfont">&#xe6ed;</i>{{order.time}}</span>
+      <span class="btn-delete"@click="delOrder(order._id)">删除</span>
     </div>
-      <div class="shop-list">
-        <div :key="shop.shopID" v-for="(shop, shopIndex) in order.shops" class="list-shop">
+    <div class="shop-list">
+      <div :key="shop.shopID" v-for="(shop, shopIndex) in order.shops" class="list-shop">
 
-          <!-- 不同的店列表 -->
-          <div class="shop-module">
-            <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name"><i class="iconfont">&#xe601;</i>{{shop.name}}</router-link>
-          </div>
-
-          <!-- 同一家店的商品列表 -->
-          <ul>
-            <li :key="product.productID" v-for="product in shop.products" class="list-product">
-
-              <div class="pic-wrap">
-                <img :src="product.picSrc" class="preview-pic">
-              </div>
-
-              <div class="product-module">
-                <span class="product-name">{{product.name}}</span><span> x{{product.count}}</span>
-                <div class="choose-type btn--a">
-                  <span>{{product.type}}</span>
-                </div>
-                <div class="product-all-price">{{product.allPrice}}</div>
-              </div>
-
-            </li>
-          </ul>
-
+        <!-- 不同的店列表 -->
+        <div class="shop-module">
+          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name"><i class="iconfont">&#xe601;</i>{{shop.name}}</router-link>
         </div>
+
+        <!-- 同一家店的商品列表 -->
+        <ul>
+          <li :key="product.productID" v-for="product in shop.products" class="list-product">
+
+            <div class="pic-wrap">
+              <img :src="product.picSrc" class="preview-pic">
+            </div>
+
+            <div class="product-module">
+              <span class="product-name">{{product.name}}</span><span> x{{product.count}}</span>
+              <div class="choose-type btn--a">
+                <span>{{product.type}}</span>
+              </div>
+              <div class="product-all-price">{{product.allPrice}}</div>
+            </div>
+
+          </li>
+        </ul>
+
       </div>
     </div>
+  </div>
 
     <!-- 无订单提示 -->
-    <div v-show="noOrders" class="no-product-tip">
-      <p class="tip-text">你的订单列表空空如也</p>
-    </div>
-
+  <div v-show="noOrders" class="no-product-tip">
+    <p class="tip-text">你的订单列表空空如也</p>
   </div>
+
 </div>
 </template>
 
@@ -60,16 +59,20 @@
     },
     methods:{
       loadOrders(){
-        if(this.$store.state.hasLogin){
+        if (this.$store.state.hasLogin) {
           this.axios({
             url: 'order/download',
             method: 'post',
             data: {
               un: this.$store.state.un
             }
-          }).then(res => {
-            this.orders = res.data.orders;
-          }).catch(err => console.error(err));
+          })
+            .then(res => {
+              this.orders = res.data.orders;
+            })
+            .catch(err =>
+              console.error(err)
+            );
         } else {
           this.$router.push('/login');
         }
@@ -106,12 +109,21 @@
   margin: .1rem 0;
 }
 
-.order-time {
+.order-title {
+  padding: 0 1em; 
   font-size: 20px;
   line-height: 2;
-  text-align: center;
-  color: #7298f7;
   background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+}
+
+.order-time {
+  color: #7298f7;
+}
+
+.btn-delete {
+  color: #eb2d2d;
 }
 
 .cart-list {

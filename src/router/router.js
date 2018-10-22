@@ -34,22 +34,13 @@ const router = new VueRouter({
       footer: footer
     }
   }, {
-    path: '/shop/:shopIndex',
+    path: '/shop/:shopIndex/:typeIndex',
     name: '商店',
-    props: {
-      default: true,
-      header: false,
-      footer: false
-    },
     components: {
       default: shop,
       header: header,
       footer: footer
-    }, 
-    beforeEnter(to, from, next){
-      store.commit('LOAD_SHOP_TYPE',to.params.shopIndex);
-      next();
-    }  
+    }
   }, {
     path: '/user',
     name: '用户管理',
@@ -57,7 +48,11 @@ const router = new VueRouter({
       default: user,
       header: header,
       footer: footer
+    },
+    meta:{
+      redirectLogin: true
     }
+
   }, {
     path: '/order',
     name: '订单管理',
@@ -65,18 +60,16 @@ const router = new VueRouter({
       default: order,
       header: header,
       footer: footer
+    },
+    meta:{
+      redirectLogin: true
     }
   }, {
       name: '商品',
-      path:'/shop/:shopIndex/product/:productIndex',
+      path:'/shop/:shopIndex/:typeIndex/:productIndex',
       components: {
         default: product,
         header: header
-      },
-      beforeEnter (to, from, next) {
-        store.commit('LOAD_SHOP_TYPE',to.params.shopIndex);
-        store.commit('LOAD_PRODUCT_DETAIL',to.params.productIndex);
-        next();
       }
   }, {
     path: '/cart',
@@ -84,6 +77,9 @@ const router = new VueRouter({
     components: {
       default: cart,
       header: header
+    },
+    meta:{
+      redirectLogin: true
     }
   }, {
     path: '/login',
@@ -110,11 +106,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.path === '/login') {
+  if (to.path === '/login') {
     next();
-  } else if(!store.state.hasLogin && to.path == '/user'){
-    console.log(from.path);
-    next('/login');
+  } else if (!store.state.hasLogin && to.meta.redirectLogin) {
+    next('/login?redirect=true');
   } else next();
  });
-export default router
+export default router;

@@ -1,13 +1,13 @@
 {
-  "list|20-30": [{
+  "list|15-20": [{
     "name": "@cword(3,6)",
-    "shopID|+1": 1,
+    "shopIndex|+1": 1,
     "picSrc": "@image('200x200', '#4A7BF7', '商店')",
     "types|5-10": [{
       "name": "@cword(2, 5)",
       "products|10-30": [{
         "name": "@cword(2, 5)",
-        "productID|+1": 2,
+        "productIndex|+1": 2,
         "price": "@float(0, 99999, 2, 2)",
         "expressPrice": "@integer(5, 40)",
         "picSrc": "@image('100x100', '#4A7BF7', '商品')",

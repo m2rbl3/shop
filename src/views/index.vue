@@ -3,10 +3,12 @@
     <div v-if="isLoading" class="loading">Loading...</div>
     <div v-else class="index">
       <search></search>
-      <swiper></swiper>
+      <!-- <swiper></swiper> -->
       <div class="shop-list">
         <ul>
-          <li @click="loadTypeProduct(shop.shopID,shopIndex)" v-for="(shop,shopIndex) in shops" class="shop">
+          <li @click="pushShopPage(shopIndex, shop.name, shop.shopID)" 
+            :key="shop.shopID" v-for="(shop,shopIndex) in shops"
+            class="shop">
             <div class="shop-pic">
               <img :src="shop.picSrc">
             </div>
@@ -19,11 +21,10 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import {mapState} from 'vuex'
   import Vue from 'vue'
   import swiper from '@/components/index/swiper'
   import search from '@/components/index/search'
- 
 
   export default {
     name: 'shop',
@@ -32,21 +33,19 @@
         return this.shops.length === 0 ? true : false;
       },
       ...mapState({
-        shops: 'shops' /* vuex shop.js*/
+        shops: 'shops'
       })
     },
     methods:{
-      loadTypeProduct(shopID,shopIndex){
-        const _self = this; 
-        this.$store.commit('LOAD_SHOP_TYPE', shopIndex);
-        this.$router.push(`/shop/${shopIndex}?headName=${_self.$store.state.chooseShop.name}`);
+      pushShopPage(shopIndex, shopName, shopID){
+        this.$router.push(`/shop/${shopIndex}/0?headName=${shopName}`);
       }
     },
-    created() {
+    beforeCreate() {
       this.$store.dispatch('LOAD_SHOP_LIST');
     },
     components:{
-      swiper,search
+      swiper, search
     }
   }
 </script>
@@ -60,7 +59,8 @@
 
   .shop-list {
     background-color: white;
-    height: calc(100% - 1.9rem);
+    height: 100%;
+    /* height: calc(100% - 1.9rem); */
     & ul{
       height: 100%;
       overflow: auto;

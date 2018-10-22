@@ -1,7 +1,9 @@
 <template>
   <div class="product-list">
     <ul>
-      <li @click="loadProductDetail(productIndex,product.name)" v-for="(product,productIndex) in products" class="product">
+      <li @click="goProductDetail(productIndex, product.name)" 
+        :key="product.productId" v-for="(product, productIndex) in type.products" 
+        class="product">
         <div class="product-pic">
           <img :src="product.picSrc">
         </div>
@@ -12,23 +14,24 @@
 </template>
 
 <script>
-  import {mapState, mapGetters} from 'vuex'
+  import {mapState} from 'vuex'
   export default {
     name:'product-list',
-    props:['shopIndex'],
     computed: {
       ...mapState({
-        typeIndex: 'chooseTypeIndex'
+        type: 'chooseType',
      }),
-      ...mapGetters({
-        products: 'products'
-      })
     },
     methods:{
-      loadProductDetail (productIndex,productName) {
-        const _self = this;
-        this.$store.commit('LOAD_PRODUCT_DETAIL', productIndex);
-        this.$router.push(`/shop/${_self.shopIndex}/product/${productIndex}?headName=${productName}`);
+      goProductDetail(productIndex, productName){
+        const shopIndex = this.$route.params.shopIndex,
+              typeIndex = this.$route.params.typeIndex;
+
+        this.$router.push(
+          `/shop/${shopIndex}` +
+          `/${typeIndex}` +
+          `/${productIndex}`
+        );
       }
     }
   }

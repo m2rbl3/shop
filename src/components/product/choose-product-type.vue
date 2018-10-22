@@ -13,7 +13,8 @@
 
       <div class="type-list">
         <form>
-          <div class="type-list__item" v-for="(type,index) in productTypes">
+          <div class="type-list__item"
+            :key="type" v-for="(type,index) in productTypes">
             <input @click="chooseType($event,type)" :id="index" name="product-types" type="radio">
             <label :for="index">{{type}}</label>
           </div>
@@ -30,12 +31,10 @@
   import CartCount from '@/components/product/cart-count'
   export default {
     name:'product-type',
+    props: ['chooseProduct'],
     computed:{
-      chooseProduct(){
-        return this.$store.state.chooseProduct;
-      },
       productTypes(){
-        return this.chooseProduct.types
+        return this.chooseProduct.types;
       },
       allPrice(){
         return this.$store.state.productCache.allPrice;

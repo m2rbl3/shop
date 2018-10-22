@@ -1,95 +1,88 @@
 <template>
-  <div>
-    <div class="cart-list">
-      <div :key="shop.shopID" v-for="(shop, shopIndex) in cartShops" class="list-shop">
-        <!-- 不同的店列表 -->
-        <div class="shop-module">
-          <div class="checkbox">
-            <input 
-              :id="shop.shopID" 
-              :checked="shop.checked" 
-              @click="shopAllSelect($event,shopIndex)" 
-              type="checkbox" 
-              class="input-choose">
-            <label :for="shop.shopID" class="choose-label"></label>
-          </div>
-          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name"><i class="iconfont">&#xe601;</i>{{shop.name}}</router-link>
-          <span class="icon--go">></span>
+<div>
+  <div class="cart-list">
+    <div :key="shop.shopID" v-for="(shop, shopIndex) in cartShops" class="list-shop">
+      <!-- 不同的店列表 -->
+      <div class="shop-module">
+        <div class="checkbox">
+          <input :id="shop.shopID" :checked="shop.checked" @click="shopAllSelect($event,shopIndex)" type="checkbox"
+            class="input-choose">
+          <label :for="shop.shopID" class="choose-label"></label>
         </div>
-
-        <!-- 同一家店的商品列表 -->
-        <ul>
-          <li v-for="(product, productIndex) in shop.products" :key="product.productID" class="list-product">
-            <div class="checkbox">
-
-              <input :checked="product.checked" 
-                :id="product.productID + product.type" 
-                :data-shop-id="shop.shopID" 
-                :data-price="product.price" 
-                :data-count="product.count" 
-                @click="checkedSync($event, shopIndex, productIndex)" 
-                type="checkbox"
-                class="input-choose">
-
-              <label :for="product.productID + product.type" class="choose-label"></label>
-            </div>
-
-              <div class="pic-wrap">
-                <img :src="product.picSrc" class="preview-pic">
-              </div>
-
-              <div class="product-module">
-                <p class="product-name btn--a">{{product.name}}</p>
-                <div class="choose-type btn--a">
-                  <span>{{product.type}}</span><span class="icon--go">></span>
-                </div>
-                <div class="btn-wrap">
-                  <CartCount :shop-index="shopIndex" :product-index="productIndex"></CartCount>
-                  <button @click="delCartProduct(shopIndex,productIndex)" class="btn-del">删除</button>
-                </div>
-              </div>
-          </li>
-        </ul>
+        <JumpShop :shop="shop"></JumpShop>
       </div>
-    </div>
 
-    <!-- 结算底栏 -->
-    <div v-if="hasProducts" class="payment-module">
-      <div class="all-price">总计：{{allPrice}}</div>
-      <a @click="canGoPay" class="payment btn--a">结算</a>
-      <tip-dialog ref="tip">请选择需要结算的商品</tip-dialog>
-    </div>
-    <!-- 购物车无商品提示 -->
-    <div v-else class="no-product-tip">
-      <p class="tip-text">你的购物车空空如也</p>
+      <!-- 同一家店的商品列表 -->
+      <ul>
+        <li v-for="(product, productIndex) in shop.products" :key="product.productID" class="list-product">
+          <div class="checkbox">
+
+            <input :checked="product.checked" :id="product.productID + product.type" :data-shop-id="shop.shopID"
+              :data-price="product.price" :data-count="product.count" @click="checkedSync($event, shopIndex, productIndex)"
+              type="checkbox" class="input-choose">
+
+            <label :for="product.productID + product.type" class="choose-label"></label>
+          </div>
+
+          <div class="pic-wrap">
+            <img :src="product.picSrc" class="preview-pic">
+          </div>
+
+          <div class="product-module">
+            <JumpProduct :shop="shop" :product = "product"></JumpProduct>
+            <!-- <p class="product-name btn--a">{{product.name}}</p> -->
+            <div class="choose-type btn--a">
+              <span>{{product.type}}</span><span class="icon--go">></span>
+            </div>
+            <div class="btn-wrap">
+              <CartCount :shop-index="shopIndex" :product-index="productIndex"></CartCount>
+              <button @click="delCartProduct(shopIndex,productIndex)" class="btn-del">删除</button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
+
+  <!-- 结算底栏 -->
+  <div v-if="hasProducts" class="payment-module">
+    <div class="all-price">总计：{{allPrice}}</div>
+    <a @click="canGoPay" class="payment btn--a">结算</a>
+    <tip-dialog ref="tip">请选择需要结算的商品</tip-dialog>
+  </div>
+  <!-- 购物车无商品提示 -->
+  <div v-else class="no-product-tip">
+    <p class="tip-text">你的购物车空空如也</p>
+  </div>
+</div>
 </template>
 
 <script>
-import vue from "vue";
+import vue from "vue"
 import CartCount from "@/components/cart/cart-count"
-import tipDialog from '@/components/tip-dialog'
+import TipDialog from "@/components/tip-dialog"
+import JumpProduct from "@/components/product/jump-product"
+import JumpShop from "@/components/shop/jump-shop"
+
 export default {
   name: "cart",
   computed: {
     cartShops() {
       return this.$store.state.cartShops;
     },
-
-    /*计算总价格*/
     allPrice() {
       if (this.cartShops.length > 0) {
-        let allPriceCache = this.cartShops.map((shop, si) =>
-              shop.products.map((product, pi) => {
-                  if (product.checked) return parseFloat(product.allPrice);
-                  else return 0;
-              }).reduce((acc, cval) => acc + cval, 0) //各店的商品总价格
-        ).reduce((acc, cval) => acc + cval, 0); //所有店的商品总价格
+        /* 全购物车 */
+        let allPriceCache = this.cartShops.reduce((acc, shop) =>
+          /* 各店的商品总价格 */
+          acc + shop.products.reduce((acc, product) => {
+            return product.checked ?
+              acc + parseFloat(product.allPrice) :
+              acc
+          }, 0), 0);
         return Math.ceil(100 * allPriceCache) / 100;
       } else return 0;
     },
-
     /*购物车空则提示，否则显示付款底栏*/
     hasProducts() {
       if (this.cartShops.length == 0) return "";
@@ -146,28 +139,43 @@ export default {
       (cartShops => {
         const _self = this;
         cartShops.forEach((shop, shopIndex) => {
-          /* 如果全部商品都checked了, 则同步商品全选按钮checked */ 
+          /* 如果全部商品都checked了, 则同步商品全选按钮checked */
           if (shop.products.every(product => product.checked))
-            _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: true });
-          else _self.$store.commit("SHOP_ALL_CHECK", { shopIndex, val: false });
+            _self.$store.commit("SHOP_ALL_CHECK", {
+              shopIndex,
+              val: true
+            });
+          else _self.$store.commit("SHOP_ALL_CHECK", {
+            shopIndex,
+            val: false
+          });
         });
       })(this.cartShops);
     },
 
     /*删除购物车某商品*/
     delCartProduct(shopIndex, productIndex) {
-      this.$store.commit("DEL_CART_PRODUCT", { shopIndex, productIndex });
+      this.$store.commit("DEL_CART_PRODUCT", {
+        shopIndex,
+        productIndex
+      });
+      
       /* 如果商店商品列表为空, 则删除该商店 */
       if (this.cartShops[shopIndex].products.length === 0)
         this.$store.commit("DEL_CART_SHOP", shopIndex);
     },
-    canGoPay(){
-      if(this.allPrice == 0) {
+    canGoPay() {
+      if (this.allPrice == 0) {
         this.$refs.tip.toShowDialog(true);
       } else this.$router.push('/pay');
     }
   },
-  components: {CartCount, tipDialog}
+  components: {
+    CartCount,
+    TipDialog,
+    JumpShop,
+    JumpProduct
+  }
 };
 </script>
 
@@ -209,7 +217,7 @@ export default {
 }
 
 .input-choose:checked + .choose-label {
-  background-color: #6288f7;
+  background-color: #274ab4;
 }
 
 .shop-name {

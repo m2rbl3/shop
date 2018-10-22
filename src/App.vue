@@ -82,7 +82,7 @@ export default {
   }
   
   .iconfont::after {
-    content:' ';
+    content: '';
   }
 
 @font-face {
