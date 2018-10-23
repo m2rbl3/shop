@@ -18,6 +18,7 @@ const cart = () => import('@/views/cart');
 const login = () => import('@/views/login');
 const register = () => import('@/views/register')
 const pay = () => import('@/views/pay');
+const search = () => import('@/views/search')
 const header = () => import('@/components/v-header');
 const footer = () => import('@/components/v-footer');
 
@@ -34,6 +35,14 @@ const router = new VueRouter({
       footer: footer
     }
   }, {
+    path:'/search',
+    name:'搜索',
+    components: {
+      default: search,
+      header: header,
+      footer: footer
+    }
+  },{
     path: '/shop/:shopIndex/:typeIndex',
     name: '商店',
     components: {

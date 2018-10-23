@@ -10,6 +10,7 @@ import persistedState from "vuex-persistedstate";
 import shop from '@/vuex/shop/shop'
 import cart from '@/vuex/cart/cart'
 import user from '@/vuex/user/user'
+import search from '@/vuex/search/search'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -18,6 +19,7 @@ const store = new Vuex.Store({
     ...shop.state,
     ...cart.state,
     ...user.state,
+    ...search.state,
   },
   getters:{
     ...shop.getters,
@@ -26,9 +28,11 @@ const store = new Vuex.Store({
     ...shop.mutations,
     ...cart.mutations,
     ...user.mutations,
+    ...search.mutations
   },
   actions:{
-    ...shop.actions
+    ...shop.actions,
+    ...search.actions
   }/* ,
   plugins:[persistedState()] */
 });

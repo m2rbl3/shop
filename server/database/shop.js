@@ -26,38 +26,42 @@ exports.chooseProduct = async function ({shopIndex, typeIndex, productIndex}) {
     .then(shop => shop[shopIndex].types[typeIndex].products[productIndex]);
 }
 
-/* exports.search = async function ({value}) {
-  await connect();
-  var search = new RegExp(`\\w*${value}\\w*`, 'g');
-  return ShopTypes.find({'shop.types.products.productName': search}).exec()
-    .then(val => {
-      console.log(val);
-      return val;
-    });
-}
- */
 exports.search = async function({value}) {
   await connect();
   let search = new RegExp(`\\w*${value}\\w*`, 'g');
-  
-  return ShopTypes.aggregate()
-    .match({ "types.products.name": search })
-    .unwind("types")
-    .match({ "types.products.name": search })
-    .unwind("$types.products")
-    .match({ "types.products.name": search })
-    .then(res => res.map(cv => cv.types.products));
+  let result = [];
 
-  return ShopTypes.aggregate([{
-    $match: { "types.products.name": search }
-  }, {
-    $unwind: "$types"
-  }, {
-    $match: { "types.products.name": search }
-  }, {
-    $unwind: "$types.products"
-  }, {
-    $match: { "types.products.name": search }
-  },])
-    .then(res => res.map(cv => cv.types.products));
+  console.log(`正在搜索${value}`);
+
+  await ShopTypes.find().exec().then(shops => {
+    shops.forEach((shop, shopIndex) => {
+      shop.types.forEach((type, typeIndex) => {
+        type.products.forEach((product, productIndex) => {
+          if(~product.name.search(search)){
+            let shopName = "";
+            Shop.find().exec().then(shops => {
+              shopName = shops[shopIndex].name;
+            });
+            result.push({
+              shopName,
+              productName: product.name,
+              shopIndex,
+              typeIndex,
+              productIndex
+            });
+          }
+        });
+      });
+    });
+  });
+  return result;
+  /*   return ShopTypes.aggregate()
+    .match({"types.products.name": search})
+    .unwind("types")
+    .match({"types.products.name": search})
+    .unwind("types.products")
+    .match({"types.products.name": search})
+    .then(res => res.types.product)
+} */
 }
+

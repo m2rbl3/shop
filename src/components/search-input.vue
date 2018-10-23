@@ -2,12 +2,7 @@
   <div class="search bgcolor-blue">
     <div class="input-wrap">
       <i class="iconfont input-icon">&#xe651;</i>
-      <input @change="loadSearchResult" class="search-input">
-      <!-- <ul class="search-list">
-        <li :key="item.id" v-for="item in searchResultList" class="search-item">
-          <a @click="goResult(item.id)">{{item.name}}</a>
-        </li>
-      </ul> -->
+      <input @keyup.enter="loadSearchResult" class="search-input">
     </div>
   </div>
 </template>
@@ -21,14 +16,10 @@
       }
     },
     methods: {
-      loadSearchResult(e){
-        let value = e.target.value;
-        this.axios.get(`/search?value=${value}`)
-          .then(res => this.searchResultList = res.data);
-      },
-      // async goResult(id){
-      //   // this.$router.push('product')
-      // }
+      async loadSearchResult(e){
+        await this.$store.dispatch('LOAD_SEARCH_RESULT', e.target.value);
+        this.$router.push('/search');
+      }
     }
   }
 </script>

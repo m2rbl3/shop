@@ -2,7 +2,7 @@
   <div>
     <div v-if="isLoading" class="loading">Loading...</div>
     <div v-else class="index">
-      <search></search>
+      <SearchInput></SearchInput>
       <!-- <swiper></swiper> -->
       <div class="shop-list">
         <ul>
@@ -23,8 +23,8 @@
 <script>
   import {mapState} from 'vuex'
   import Vue from 'vue'
-  import swiper from '@/components/index/swiper'
-  import search from '@/components/index/search'
+  import Swiper from '@/components/index/swiper'
+  import SearchInput from '@/components/search-input'
 
   export default {
     name: 'shop',
@@ -45,7 +45,7 @@
       this.$store.dispatch('LOAD_SHOP_LIST');
     },
     components:{
-      swiper, search
+      Swiper, SearchInput
     }
   }
 </script>
