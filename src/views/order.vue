@@ -3,14 +3,14 @@
   <div :key="order._id" v-for="order in orders" class="order-list">
     <div class="order-title">
       <span class="order-time"><i class="iconfont">&#xe6ed;</i>{{order.time}}</span>
-      <span class="btn-delete"@click="delOrder(order._id)">删除</span>
+      <span class="btn-delete" @click="delOrder(order._id)">删除</span>
     </div>
     <div class="shop-list">
       <div :key="shop.shopID" v-for="(shop, shopIndex) in order.shops" class="list-shop">
 
         <!-- 不同的店列表 -->
         <div class="shop-module">
-          <router-link :to="'/shop/' + shopIndex + '?headName=' + shop.name" class="shop-name"><i class="iconfont">&#xe601;</i>{{shop.name}}</router-link>
+          <JumpShop :shopName="shop.name" :shopIndex="shop.shopIndex"></JumpShop>
         </div>
 
         <!-- 同一家店的商品列表 -->
@@ -22,9 +22,15 @@
             </div>
 
             <div class="product-module">
-              <span class="product-name">{{product.name}}</span><span> x{{product.count}}</span>
+              <JumpProduct
+                :shopIndex="shop.shopIndex"
+                :typeIndex="shop.typeIndex"
+                :productName="product.name" 
+                :productIndex="product.proIndex">
+              </JumpProduct>
               <div class="choose-type btn--a">
                 <span>{{product.type}}</span>
+                <span> x{{product.count}}</span>
               </div>
               <div class="product-all-price">{{product.allPrice}}</div>
             </div>
@@ -45,58 +51,61 @@
 </template>
 
 <script>
-  export default {
-    name: '订单',
-    data(){
-      return {
-        orders: []
-      }
-    },
-    computed:{
-      noOrders(){
-        return !this.orders.length;
-      }
-    },
-    methods:{
-      loadOrders(){
-        if (this.$store.state.hasLogin) {
-          this.axios({
-            url: 'order/download',
-            method: 'post',
-            data: {
-              un: this.$store.state.un
-            }
-          })
-            .then(res => {
-              this.orders = res.data.orders;
-            })
-            .catch(err =>
-              console.error(err)
-            );
-        } else {
-          this.$router.push('/login');
-        }
-      },
-      delOrder(_id){
-        console.log(_id);
+import JumpProduct from "@/components/product/jump-product"
+import JumpShop from "@/components/shop/jump-shop"
+export default {
+  name: '订单',
+  data(){
+    return {
+      orders: []
+    }
+  },
+  computed:{
+    noOrders(){
+      return !this.orders.length;
+    }
+  },
+  methods:{
+    loadOrders(){
+      if (this.$store.state.hasLogin) {
         this.axios({
-          url: 'order/delete',
+          url: 'order/download',
           method: 'post',
           data: {
-            un: this.$store.state.un,
-            _id
+            un: this.$store.state.un
           }
         })
           .then(res => {
-            res.data == 200 ? this.loadOrders() : console.log('删除失败') 
+            this.orders = res.data.orders;
           })
-          .catch(err => console.error(err));
+          .catch(err =>
+            console.error(err)
+          );
+      } else {
+        this.$router.push('/login');
       }
     },
-    created(){
-      this.loadOrders();
-    },
-  }
+    delOrder(_id){
+      console.log(_id);
+      this.axios({
+        url: 'order/delete',
+        method: 'post',
+        data: {
+          un: this.$store.state.un,
+          _id
+        }
+      })
+        .then(res => {
+          res.data == 200 ? this.loadOrders() : console.log('删除失败') 
+        })
+        .catch(err => console.error(err));
+    }
+  },
+  created(){
+    this.loadOrders();
+  },
+  components:{ JumpProduct, JumpShop }
+}
 </script>
 
 <style scoped>

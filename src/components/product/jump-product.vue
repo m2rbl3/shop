@@ -1,18 +1,18 @@
 <template>
-  <router-link :to="productURL" class="product-name">{{product.name}}</router-link>
+  <router-link :to="productURL" class="product-name">{{productName}}</router-link>
 </template>
 
 <script>
   export default {
     name: '商品页面跳转',
-    props: ['shop', 'product'],
+    props: ['shopIndex', 'typeIndex', 'productName', 'productIndex'],
     computed:{
       productURL(){
         return `/shop/` +
-        `${this.shop.shopIndex}/` +
-        `${this.shop.typeIndex}/` +
-        `${this.product.productIndex}?headName=` +
-        `${this.product.name}`
+        `${this.shopIndex}/` +
+        `${this.typeIndex}/` +
+        `${this.productIndex}?headName=` +
+        `${this.productName}`
       }
     },
   }

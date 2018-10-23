@@ -5,11 +5,11 @@
       <!-- 不同的店列表 -->
       <div class="shop-module">
         <div class="checkbox">
-          <input :id="shop.shopID" :checked="shop.checked" @click="shopAllSelect($event,shopIndex)" type="checkbox"
-            class="input-choose">
+          <input :id="shop.shopID" :checked="shop.checked" @click="shopAllSelect($event, shopIndex)" 
+            type="checkbox" class="input-choose">
           <label :for="shop.shopID" class="choose-label"></label>
         </div>
-        <JumpShop :shop="shop"></JumpShop>
+        <JumpShop :shopIndex="shop.shopIndex" :shopName="shop.name"></JumpShop>
       </div>
 
       <!-- 同一家店的商品列表 -->
@@ -29,7 +29,7 @@
           </div>
 
           <div class="product-module">
-            <JumpProduct :shop="shop" :product = "product"></JumpProduct>
+            <JumpProduct :shopIndex="shop.shopIndex" :typeIndex = "shop.typeIndex" :productName="product.name" :productIndex = "product.proIndex"></JumpProduct>
             <!-- <p class="product-name btn--a">{{product.name}}</p> -->
             <div class="choose-type btn--a">
               <span>{{product.type}}</span><span class="icon--go">></span>
@@ -92,65 +92,36 @@ export default {
   methods: {
     /*全选反选并同步store选中状态*/
     shopAllSelect(e, shopIndex) {
-      const _self = this;
-
+      // let isAllSelect = !this.cartShops[shopIndex].checked;
       this.$store.commit("SHOP_ALL_CHECK", {
         shopIndex,
         val: e.target.checked
       });
-      if (!!e.target.checked)
-        this.cartShops[shopIndex].products.forEach((product, productIndex) => {
-          _self.$store.commit("CHANGE_CART_PRODUCT_DATA", {
-            shopIndex,
-            productIndex,
-            prop: "checked",
-            val: true
-          });
+      this.cartShops[shopIndex].products.forEach((product, productIndex) => {
+        this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+          shopIndex,
+          productIndex,
+          prop: "checked",
+          val: e.target.checked
         });
-      else
-        this.cartShops[shopIndex].products.forEach((product, productIndex) => {
-          _self.$store.commit("CHANGE_CART_PRODUCT_DATA", {
-            shopIndex,
-            productIndex,
-            prop: "checked",
-            val: false
-          });
-        });
+      });
     },
 
     /* 与store同步checked状态 */
     checkedSync(e, shopIndex, productIndex) {
-      if (!!e.target.checked)
-        this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
-          shopIndex,
-          productIndex,
-          prop: "checked",
-          val: true
-        });
-      else
-        this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
-          shopIndex,
-          productIndex,
-          prop: "checked",
-          val: false
-        });
+      this.$store.commit("CHANGE_CART_PRODUCT_DATA", {
+        shopIndex,
+        productIndex,
+        prop: "checked",
+        val: !!e.target.checked
+      });
 
       /* 如果所有商品都全选了，商店的全选按钮也变成选择状态 */
-      (cartShops => {
-        const _self = this;
-        cartShops.forEach((shop, shopIndex) => {
-          /* 如果全部商品都checked了, 则同步商品全选按钮checked */
-          if (shop.products.every(product => product.checked))
-            _self.$store.commit("SHOP_ALL_CHECK", {
-              shopIndex,
-              val: true
-            });
-          else _self.$store.commit("SHOP_ALL_CHECK", {
-            shopIndex,
-            val: false
-          });
-        });
-      })(this.cartShops);
+      let isAllSelect = this.cartShops[shopIndex].products.every(product => product.checked);
+      this.$store.commit("SHOP_ALL_CHECK", {
+        shopIndex,
+        val: isAllSelect
+      });
     },
 
     /*删除购物车某商品*/
@@ -167,7 +138,8 @@ export default {
     canGoPay() {
       if (this.allPrice == 0) {
         this.$refs.tip.toShowDialog(true);
-      } else this.$router.push('/pay');
+      } else
+        this.$router.push('/pay');
     }
   },
   components: {
@@ -218,11 +190,6 @@ export default {
 
 .input-choose:checked + .choose-label {
   background-color: #274ab4;
-}
-
-.shop-name {
-  margin-left: 0.5em;
-  display: inline-block;
 }
 
 .icon--go {

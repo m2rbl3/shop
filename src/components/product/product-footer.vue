@@ -34,13 +34,17 @@ export default {
     addCart() {
       /* 已勾选产品类型提交 */
       if (this.productCache.type !== undefined) {
-        let shopIndex = this.$route.params.shopIndex,
-          typeIndex = this.$route.params.typeIndex,
-          name = this.$store.state.shops[shopIndex].name,
-          products = [this.$store.state.productCache];
+        let params = this.$route.params,
+          state = this.$store.state,
+          shopIndex = params.shopIndex,
+          typeIndex = params.typeIndex,
+          shopID = state.shops[shopIndex]._id,
+          name = state.shops[shopIndex].name,
+          products = [{proIndex: params.productIndex, ...state.productCache}];
 
         let shopCache = JSON.parse(JSON.stringify({
           name,
+          shopID,
           shopIndex,
           typeIndex,
           products,

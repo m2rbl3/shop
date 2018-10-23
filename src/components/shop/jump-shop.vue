@@ -1,16 +1,16 @@
 <template>
   <router-link :to="shopURL" class="shop-name">
-    <i class="iconfont">&#xe601;</i>{{shop.name}}
+    <i class="iconfont">&#xe601;&nbsp;</i>{{shopName}}
   </router-link>
 </template>
 
 <script>
   export default {
     name: '商店链接跳转',
-    props: ['shop'],
+    props: ['shopIndex','shopName'],
     computed: {
       shopURL(){
-        return `/shop/${this.shop.shopIndex}/0?headName=${this.shop.name}`
+        return `/shop/${this.shopIndex}/0?headName=${this.shopName}`
       }
     },
   }
@@ -18,7 +18,7 @@
 
 <style scoped>
 .shop-name {
-  margin-left: 0.5em;
+  margin-left: 1em;
   display: inline-block;
 }
 </style>
